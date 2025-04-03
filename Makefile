@@ -3,8 +3,8 @@ GREEN  		= \033[0;32m
 YELLOW 		= \033[0;33m
 RED    		= \033[0;31m
 RESET  		= \033[0m
-NAME		= name 
-BONUS		= bonus
+NAME		= philosophers
+BONUS		= philosophers_bonus
 CC			= cc
 CFLAGS		= -Wall -Wextra -Werror
 AR			= ar rcs
@@ -13,13 +13,11 @@ LIBFT_DIR	= libft
 LIBFT		= $(addprefix $(LIBFT_DIR)/, libft.a)
 SRC_DIR		= src
 BONUS_DIR	= src_bonus
-SRC			= file1.c \
-			  file2.c \
-			  file3.c 
+SRC			= main.c \
 
-SRC_BONUS	= bonus_1.c \
-			  bonus_2.c \
-			  bonus_3.c 
+# SRC_BONUS	= bonus_1.c \
+# 			  bonus_2.c \
+# 			  bonus_3.c 
 
 OBJ_DIR		= obj
 OBJ			= $(addprefix $(OBJ_DIR)/, $(SRC:.c=.o))
