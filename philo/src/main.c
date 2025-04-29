@@ -14,24 +14,31 @@
 
 void *routine(void *arg)
 {
-	printf("philosopher number:	%d\n", ((t_data *) arg)->philos);
+	t_philo *philo;
+
+	philo = (t_philo *) arg;
+	printf("philosopher %d created \n", philo->philo_num);
 	return NULL;
 }
 
 void	free_resources(int num, t_data *data)
 {
-	int	i;
-
-	i = 0;
-	while (i < num)
-		pthread_detach(data->philos[i++].philo);
+	(void) num;
+	// int	i;
+	//
+	// i = 0;
+	// while (i < num)
+	// 	pthread_detach(data->philos[i++].philo);
 	free(data->philos);
+	free(data);
+	// TODO: Find a way to detatch threads when nececcary, and join them when program is successful
 }
 
-int init_philo(t_data *data)
+int init_philos(t_data *data)
 {
 	int	i;
 
+	i = -1;
 	data->philos = malloc(data->philos_num * sizeof(t_philo));
 	if (data->philos == NULL)
 		return (ERROR);
@@ -40,7 +47,7 @@ int init_philo(t_data *data)
 	{
 		data->philos[i].philo_num = i;
 		data->philos[i].state = THINKING;
-		if (pthread_create(&data->philos[i].philo, NULL, &routine, data))
+		if (pthread_create(&data->philos[i].philo, NULL, &routine, &data->philos[i]))
 			return (i + 1);
 		i++;
 	}
@@ -71,7 +78,7 @@ int main(int ac, char **av)
 	data = malloc(sizeof(t_data));
 	if (parse_args(ac, av, data) == ERROR)
 		return (free(data), EXIT_FAILURE);
-	philos_created = init_philo(data);
+	philos_created = init_philos(data);
 	if (philos_created < data->philos_num)
 		return (free_resources(philos_created, data), EXIT_FAILURE);
 	if (join_threads(data))
@@ -81,6 +88,8 @@ int main(int ac, char **av)
 	printf("time to eat:		%d\n", data->time_to_eat);
 	printf("time to sleep:		%d\n", data->time_to_sleep);
 	printf("meal count:		%d\n", data->meal_count);
+	free_resources(data->philos_num, data);
+	return SUCCESS;
 }
 
 

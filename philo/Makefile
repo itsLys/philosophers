@@ -5,7 +5,8 @@ RED    		= \033[0;31m
 RESET  		= \033[0m
 NAME		= philo
 CC			= cc
-CFLAGS		= -Wall -Wextra -Werror
+CFLAGS		= -Wall -Wextra -Werror -ggdb -fsanitize=thread
+# LFLAGS		= -fsanitize=thread
 AR			= ar rcs
 INCLUDES	= -I./headers/
 SRC_DIR		= src
@@ -20,7 +21,7 @@ all: $(NAME)
 
 $(NAME): $(OBJ)
 	@echo "$(YELLOW)complining $(NAME)...$(RESET)"
-	@$(CC) $(OBJ) -o $(NAME)
+	@$(CC) $(CFLAGS) $(OBJ) -o $(NAME)
 
 $(OBJ_DIR)/%.o: %.c
 	@mkdir -p $(OBJ_DIR)
