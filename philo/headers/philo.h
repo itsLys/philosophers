@@ -30,9 +30,11 @@ typedef enum e_state
 
 typedef struct s_philo
 {
-	pthread_t	philo;
-	int			philo_num;
-	t_state		state;
+	pthread_t		philo;
+	int				philo_num;
+	t_state			state;
+	int				fork;
+	struct s_philo	*left_philo;
 }	t_philo ;
 
 typedef struct s_data
