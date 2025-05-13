@@ -12,36 +12,25 @@
 
 #include "philo.h"
 
+#include <unistd.h>
 #define FREE 0
 #define BUSY 1
 
-void	take_forks(t_philo *philo)
-{
-	if (philo->fork == FREE)
-		philo->fork = BUSY;
-}
-
-void	philosophy(t_philo *philo)
-{
-	// take_forks(philo);
-	// eat(philo);
-	// put_down_forks(philo);
-	// update_logs(philo);
-	// philo_sleep(philo);
-	// update_logs(philo);
-	printf("num:		%d\n", philo->philo_num);
-	printf("state:		%d\n", philo->state);
-	printf("right fork:	%p\n", &philo->fork);
-	printf("left fork:	%p\n", &philo->left_philo->fork);
-	printf("\n\n");
-}
+pthread_mutex_t m;
+unsigned long x = 0;
 
 void *routine(void *arg)
 {
-	t_philo *philo;
+	pthread_mutex_lock(&m);
 
-	philo = (t_philo *) arg;
-	philosophy(philo);
+	while (x != (unsigned long) arg)
+	{
+		pthread_mutex_unlock(&m);
+		pthread_mutex_lock(&m);
+	}
+	printf("Hello from philo %ld\n", (unsigned long) arg);
+	x++;
+	pthread_mutex_unlock(&m);
 	return NULL;
 }
 
@@ -50,12 +39,7 @@ void	free_resources(int flag, int num, t_data *data)
 	int	i;
 
 	i = 0;
-	if (flag == SUCCESS)
-	{
-		while (i < num)
-			pthread_join(data->philos[i++].philo, NULL);
-	}
-	else if (flag == ERROR)
+	if (flag == ERROR)
 	{
 		while (i < num)
 			pthread_detach(data->philos[i++].philo);
@@ -68,6 +52,7 @@ void	free_resources(int flag, int num, t_data *data)
 
 int init_philos(t_data *data)
 {
+	pthread_mutex_init(&m, NULL);
 	int	i;
 
 	i = -1;
@@ -84,7 +69,7 @@ int init_philos(t_data *data)
 			data->philos[i].left_philo = &data->philos[i - 1];
 		else
 			data->philos[i].left_philo = &data->philos[data->philos_num - 1];
-		if (pthread_create(&data->philos[i].philo, NULL, &routine, &data->philos[i]))
+		if (pthread_create(&data->philos[i].philo, NULL, &routine, (void *)((unsigned long) i)))
 			return (i + 1);
 		i++;
 	}

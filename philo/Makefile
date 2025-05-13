@@ -5,7 +5,8 @@ RED    		= \033[0;31m
 RESET  		= \033[0m
 NAME		= philo
 CC			= cc
-CFLAGS		= -Wall -Wextra -Werror -ggdb -fsanitize=thread
+# CFLAGS		= -Wall -Wextra -Werror -ggdb -fsanitize=thread
+CFLAGS		= -Wall -Wextra -Werror -ggdb
 # LFLAGS		= -fsanitize=thread
 AR			= ar rcs
 INCLUDES	= -I./headers/
