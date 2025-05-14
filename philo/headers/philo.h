@@ -28,12 +28,13 @@ typedef enum e_state
 	DEAD
 }	t_state;
 
+
 typedef struct s_philo
 {
 	pthread_t		philo;
 	int				philo_num;
 	t_state			state;
-	int				fork;
+	pthread_mutex_t	fork;
 	struct s_philo	*left_philo;
 }	t_philo ;
 
@@ -45,7 +46,7 @@ typedef struct s_data
 	int		time_to_eat;
 	int		time_to_sleep;
 	int		meal_count;
-}		t_data ;
+}	t_data ;
 
 int	parse_num(char *str);
 int	parse_args(int ac, char **av, t_data *data);

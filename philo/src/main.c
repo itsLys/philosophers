@@ -16,60 +16,62 @@
 #define FREE 0
 #define BUSY 1
 
-pthread_mutex_t m;
-unsigned long x = 0;
 
-void *routine(void *arg)
-{
-	pthread_mutex_lock(&m);
 
-	while (x != (unsigned long) arg)
-	{
-		pthread_mutex_unlock(&m);
-		pthread_mutex_lock(&m);
-	}
-	printf("Hello from philo %ld\n", (unsigned long) arg);
-	x++;
-	pthread_mutex_unlock(&m);
-	return NULL;
-}
-
-void	free_resources(int flag, int num, t_data *data)
+void	free_resources(int num, t_data *data)
 {
 	int	i;
 
 	i = 0;
-	if (flag == ERROR)
+	while (i < num)
 	{
-		while (i < num)
-			pthread_detach(data->philos[i++].philo);
+		pthread_detach(data->philos[i++].philo);
+		pthread_mutex_destroy(&data->philos[i].fork);
 	}
 	free(data->philos);
 	free(data);
-	// TODO: Find a way to detatch threads when nececcary, and join them when program is successful
-	// maybe only join since both release the resourses
 }
+
+typedef struct	s_args
+{
+	t_data	*data;
+	t_philo	*philo;
+}	t_args;
+
+void *routine(void *arg)
+{
+	t_data *data;
+	t_philo *philo;
+
+	data = ((t_args *) arg)->data;
+	philo = ((t_args *) arg)->philo;
+	printf("Hello from philo %d\n", philo->philo_num);
+	printf(" %d\n", data->time_to_die);
+	return NULL;
+}
+
 
 int init_philos(t_data *data)
 {
-	pthread_mutex_init(&m, NULL);
-	int	i;
+	t_args *args;
+	int		i;
 
-	i = -1;
 	data->philos = malloc(data->philos_num * sizeof(t_philo));
+	args = malloc(data->philos_num * sizeof(t_args));
 	if (data->philos == NULL)
 		return (ERROR);
 	i = 0;
+	data->philos[i].left_philo = &data->philos[data->philos_num - 1];
 	while (i < data->philos_num)
 	{
+		args[i].data = data;
+		args[i].philo = data->philos + i;
 		data->philos[i].philo_num = i;
-		data->philos[i].state = THINKING;
-		data->philos[i].fork = FREE;
+		if (pthread_mutex_init(&data->philos[i].fork, NULL))
+			return (ERROR);
 		if (i > 0)
 			data->philos[i].left_philo = &data->philos[i - 1];
-		else
-			data->philos[i].left_philo = &data->philos[data->philos_num - 1];
-		if (pthread_create(&data->philos[i].philo, NULL, &routine, (void *)((unsigned long) i)))
+		if (pthread_create(&data->philos[i].philo, NULL, &routine, args + i))
 			return (i + 1);
 		i++;
 	}
@@ -99,10 +101,10 @@ int main(int ac, char **av)
 		return (free(data), EXIT_FAILURE);
 	philos_created = init_philos(data);
 	if (philos_created < data->philos_num)
-		return (free_resources(ERROR, philos_created, data), EXIT_FAILURE);
+		return (free_resources(philos_created, data), EXIT_FAILURE);
 	if (join_threads(data))
-		return (free_resources(ERROR, data->philos_num, data), EXIT_FAILURE);
-	free_resources(SUCCESS, 0, data);
+		return (free_resources(data->philos_num, data), EXIT_FAILURE);
+	free_resources(0, data);
 	return SUCCESS;
 }
 
