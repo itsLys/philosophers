@@ -27,27 +27,41 @@ void	free_resources(int num, t_data *data)
 	free(data);
 }
 
-void take_forks(pthread_mutex_t *l_fork, pthread_mutex_t *r_fork)
+void print_state(t_data *data, t_philo *philo, char *msg)
 {
-	pthread_mutex_lock(l_fork);
-	pthread_mutex_lock(r_fork);
+	struct timeval	current_time;
+	long			time_stamp;
+
+	gettimeofday(&current_time, NULL);
+	time_stamp = (current_time.tv_usec - data->start_time.tv_usec) / 1000;
+	printf("%ld %d %s", time_stamp, philo->philo_num, msg);
+}
+
+void take_forks(t_data *data, t_philo *philo)
+{
+	pthread_mutex_lock(&philo->left_philo->fork);
+	print_state(data, philo, TAKE);
+	pthread_mutex_lock(&philo->fork);
+	print_state(data, philo, TAKE);
 }
 
 void eat(t_data *data, t_philo *philo)
 {
 	philo->state = EATING;
+	print_state(data, philo, EAT);
 	usleep(data->time_to_eat * 1000);
 }
 
-void put_down_forks(pthread_mutex_t *l_fork, pthread_mutex_t *r_fork)
+void put_down_forks(t_philo *philo)
 {
-	pthread_mutex_unlock(l_fork);
-	pthread_mutex_unlock(r_fork);
+	pthread_mutex_unlock(&philo->left_philo->fork);
+	pthread_mutex_unlock(&philo->fork);
 }
 
 void ft_sleep(t_data *data, t_philo *philo)
 {
 	philo->state = SLEEPING;
+	print_state(data, philo, SLEEP);
 	usleep(data->time_to_sleep * 1000);
 }
 
@@ -60,10 +74,11 @@ void *routine(void *arg)
 	philo = ((t_args *) arg)->philo;
 	while (philo->state != DEAD)
 	{
-		take_forks(&philo->left_philo->fork, &philo->fork);
+		take_forks(data, philo);
 		eat(data, philo);
-		put_down_forks(&philo->left_philo->fork, &philo->fork);
+		put_down_forks(philo);
 		ft_sleep(data, philo);
+		print_state(data, philo, THINK);
 	}
 	return NULL;
 }

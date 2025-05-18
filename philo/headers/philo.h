@@ -16,9 +16,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <pthread.h>
+#include <sys/time.h>
 
 # define ERROR -1
 # define SUCCESS 0
+# define TAKE "has taken a fork\n"
+# define EAT "is eating\n"
+# define SLEEP "is sleeping\n"
+# define THINK "is thinking\n"
+# define DIED "died\n"
 
 typedef enum e_state
 {
@@ -40,12 +46,13 @@ typedef struct s_philo
 
 typedef struct s_data
 {
-	t_philo	*philos;
-	int		philos_num;
-	int		time_to_die;
-	int		time_to_eat;
-	int		time_to_sleep;
-	int		meal_count;
+	t_philo			*philos;
+	int				philos_num;
+	int				time_to_die;
+	int				time_to_eat;
+	int				time_to_sleep;
+	int				meal_count;
+	struct timeval	start_time;
 }	t_data ;
 
 typedef struct	s_args

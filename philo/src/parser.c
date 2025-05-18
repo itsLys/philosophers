@@ -28,10 +28,12 @@ int	parse_num(char *str)
 
 int	parse_args(int ac, char **av, t_data *data)
 {
+
 	data->philos_num = parse_num(av[1]);
 	data->time_to_die = parse_num(av[2]);
 	data->time_to_eat = parse_num(av[3]);
 	data->time_to_sleep = parse_num(av[4]);
+	gettimeofday(&data->start_time, NULL);
 	if (ac == 5)
 	{
 		data->meal_count = parse_num(av[5]);
