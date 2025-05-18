@@ -27,29 +27,28 @@ void	free_resources(int num, t_data *data)
 	free(data);
 }
 
-void take_forks(pthread_mutex_t l_fork, pthread_mutex_t r_fork)
+void take_forks(pthread_mutex_t *l_fork, pthread_mutex_t *r_fork)
 {
-	pthread_mutex_lock(&philo->fork);
-	pthread_mutex_lock(&philo->left_philo->fork);
+	pthread_mutex_lock(l_fork);
+	pthread_mutex_lock(r_fork);
+}
+
+void eat(t_data *data, t_philo *philo)
+{
+	philo->state = EATING;
 	usleep(data->time_to_eat * 1000);
-	pthread_mutex_unlock(&philo->fork);
-	pthread_mutex_unlock(&philo->left_philo->fork);
+}
+
+void put_down_forks(pthread_mutex_t *l_fork, pthread_mutex_t *r_fork)
+{
+	pthread_mutex_unlock(l_fork);
+	pthread_mutex_unlock(r_fork);
+}
+
+void ft_sleep(t_data *data, t_philo *philo)
+{
+	philo->state = SLEEPING;
 	usleep(data->time_to_sleep * 1000);
-}
-
-void eat(int time_ms)
-{
-	usleep(time_ms * 1000);
-}
-
-void put_down_forks(pthread_mutex_t l_fork, pthread_mutex_t r_fork)
-{
-
-}
-
-void ft_sleep(int time_ms)
-{
-	usleep(time_ms * 1000);
 }
 
 void *routine(void *arg)
@@ -61,10 +60,10 @@ void *routine(void *arg)
 	philo = ((t_args *) arg)->philo;
 	while (philo->state != DEAD)
 	{
-		take_forks(data, philo);
-		eat(data->time_to_eat);
-		put_down_forks(data, philo);
-		ft_sleep(data->time_to_sleep);
+		take_forks(&philo->left_philo->fork, &philo->fork);
+		eat(data, philo);
+		put_down_forks(&philo->left_philo->fork, &philo->fork);
+		ft_sleep(data, philo);
 	}
 	return NULL;
 }
