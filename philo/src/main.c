@@ -11,12 +11,7 @@
 /* ************************************************************************** */
 
 #include "philo.h"
-
 #include <unistd.h>
-#define FREE 0
-#define BUSY 1
-
-
 
 void	free_resources(int num, t_data *data)
 {
@@ -32,11 +27,30 @@ void	free_resources(int num, t_data *data)
 	free(data);
 }
 
-typedef struct	s_args
+void take_forks(pthread_mutex_t l_fork, pthread_mutex_t r_fork)
 {
-	t_data	*data;
-	t_philo	*philo;
-}	t_args;
+	pthread_mutex_lock(&philo->fork);
+	pthread_mutex_lock(&philo->left_philo->fork);
+	usleep(data->time_to_eat * 1000);
+	pthread_mutex_unlock(&philo->fork);
+	pthread_mutex_unlock(&philo->left_philo->fork);
+	usleep(data->time_to_sleep * 1000);
+}
+
+void eat(int time_ms)
+{
+	usleep(time_ms * 1000);
+}
+
+void put_down_forks(pthread_mutex_t l_fork, pthread_mutex_t r_fork)
+{
+
+}
+
+void ft_sleep(int time_ms)
+{
+	usleep(time_ms * 1000);
+}
 
 void *routine(void *arg)
 {
@@ -45,11 +59,15 @@ void *routine(void *arg)
 
 	data = ((t_args *) arg)->data;
 	philo = ((t_args *) arg)->philo;
-	printf("Hello from philo %d\n", philo->philo_num);
-	printf(" %d\n", data->time_to_die);
+	while (philo->state != DEAD)
+	{
+		take_forks(data, philo);
+		eat(data->time_to_eat);
+		put_down_forks(data, philo);
+		ft_sleep(data->time_to_sleep);
+	}
 	return NULL;
 }
-
 
 int init_philos(t_data *data)
 {

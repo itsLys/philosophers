@@ -48,6 +48,12 @@ typedef struct s_data
 	int		meal_count;
 }	t_data ;
 
+typedef struct	s_args
+{
+	t_data	*data;
+	t_philo	*philo;
+}	t_args;
+
 int	parse_num(char *str);
 int	parse_args(int ac, char **av, t_data *data);
 #endif // !PHILO_H

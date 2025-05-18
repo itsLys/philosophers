@@ -6,7 +6,7 @@ RESET  		= \033[0m
 NAME		= philo
 CC			= cc
 # CFLAGS		= -Wall -Wextra -Werror -ggdb -fsanitize=thread
-CFLAGS		= -Wall -Wextra -Werror -ggdb
+CFLAGS		= -Wall -Wextra -Werror -ggdb -pthread
 # LFLAGS		= -fsanitize=thread
 AR			= ar rcs
 INCLUDES	= -I./headers/
