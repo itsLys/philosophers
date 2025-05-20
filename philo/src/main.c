@@ -27,29 +27,43 @@ void	free_resources(int num, t_data *data)
 	free(data);
 }
 
+long	get_timestamp(t_time curr, t_time start)
+{
+	long	m_start_time;
+	long	m_current_time;
+
+	m_start_time = start.tv_sec * 1000 + start.tv_usec / 1000;
+	m_current_time = curr.tv_sec * 1000 + curr.tv_usec / 1000;
+	return m_current_time - m_start_time;
+}
+
 void print_state(t_data *data, t_philo *philo, char *msg)
 {
 	struct timeval	current_time;
-	long			time_stamp;
+	long			timestamp;
 
 	gettimeofday(&current_time, NULL);
-	time_stamp = (current_time.tv_usec - data->start_time.tv_usec) / 1000;
-	printf("%ld %d %s", time_stamp, philo->philo_num, msg);
+	timestamp = get_timestamp(current_time, data->start_time);
+	printf("%ld %d %s", timestamp, philo->num, msg);
 }
 
 void take_forks(t_data *data, t_philo *philo)
 {
 	pthread_mutex_lock(&philo->left_philo->fork);
-	print_state(data, philo, TAKE);
+	print_state(data, philo, MSG_TAKE);
 	pthread_mutex_lock(&philo->fork);
-	print_state(data, philo, TAKE);
+	print_state(data, philo, MSG_TAKE);
 }
 
 void eat(t_data *data, t_philo *philo)
 {
+	pthread_mutex_lock(&data->state_barrier);
+	gettimeofday(&philo->last_meal_time, NULL);
 	philo->state = EATING;
-	print_state(data, philo, EAT);
+	pthread_mutex_unlock(&data->state_barrier);
+	print_state(data, philo, MSG_EAT);
 	usleep(data->time_to_eat * 1000);
+	philo->meals_eaten++;
 }
 
 void put_down_forks(t_philo *philo)
@@ -60,9 +74,19 @@ void put_down_forks(t_philo *philo)
 
 void ft_sleep(t_data *data, t_philo *philo)
 {
+	pthread_mutex_lock(&data->state_barrier);
 	philo->state = SLEEPING;
-	print_state(data, philo, SLEEP);
+	pthread_mutex_unlock(&data->state_barrier);
+	print_state(data, philo, MSG_SLEEP);
 	usleep(data->time_to_sleep * 1000);
+}
+
+void think(t_data *data, t_philo *philo)
+{
+	pthread_mutex_lock(&data->state_barrier);
+	philo->state = THINKING;
+	pthread_mutex_unlock(&data->state_barrier);
+	print_state(data, philo, MSG_THINK);
 }
 
 void *routine(void *arg)
@@ -78,7 +102,7 @@ void *routine(void *arg)
 		eat(data, philo);
 		put_down_forks(philo);
 		ft_sleep(data, philo);
-		print_state(data, philo, THINK);
+		think(data, philo);
 	}
 	return NULL;
 }
@@ -98,7 +122,7 @@ int init_philos(t_data *data)
 	{
 		args[i].data = data;
 		args[i].philo = data->philos + i;
-		data->philos[i].philo_num = i;
+		data->philos[i].num = i;
 		if (pthread_mutex_init(&data->philos[i].fork, NULL))
 			return (ERROR);
 		if (i > 0)
@@ -120,6 +144,46 @@ int	join_threads(t_data *data)
 	return (SUCCESS);
 }
 
+int	should_stop(t_data *data)
+{
+	int	i;
+
+	i = 0;
+	while (i < data->philos_num)
+	{
+		if (data->philos[i].state == DEAD)
+			return TRUE;
+		i++;
+	}
+	return FALSE;
+}
+
+int	check_state(t_data *data)
+{
+	// int i;
+	// t_time state_change_time;
+	//
+	// i = 0;
+	// pthread_mutex_lock(&data->state_barrier);
+	// while (i < data->philos_num)
+	// {
+	// 	if (data->philos[i].state == THINKING)
+	// 	{
+	// 		gettimeofday(&state_change_time, NULL);
+	// 	}
+	// }
+}
+
+void monitor(t_data *data)
+{
+	// while (should_stop(data) == FALSE)
+	// {
+	// 	check_state(data);
+	// }
+	// checks each philo's state?
+	// check
+}
+
 int main(int ac, char **av)
 {
 	t_data *data;
@@ -127,13 +191,14 @@ int main(int ac, char **av)
 
 	ac--;
 	if (ac != 4 && ac != 5)
-		return (EXIT_FAILURE);
+		return (printf(ERR_MSG), EXIT_FAILURE);
 	data = malloc(sizeof(t_data));
 	if (parse_args(ac, av, data) == ERROR)
-		return (free(data), EXIT_FAILURE);
+		return (printf(ERR_MSG), free(data), EXIT_FAILURE);
 	philos_created = init_philos(data);
 	if (philos_created < data->philos_num)
 		return (free_resources(philos_created, data), EXIT_FAILURE);
+	monitor(data);
 	if (join_threads(data))
 		return (free_resources(data->philos_num, data), EXIT_FAILURE);
 	free_resources(0, data);
@@ -147,3 +212,5 @@ int main(int ac, char **av)
 //
 // mutexes
 //
+//
+// TODO: handle one philo

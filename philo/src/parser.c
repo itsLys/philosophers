@@ -15,7 +15,7 @@
 int	parse_num(char *str)
 {
 	int	n;
-	
+
 	n = 0;
 	if (*str == '\0')
 		return (ERROR);
@@ -25,28 +25,35 @@ int	parse_num(char *str)
 		return (ERROR);
 	return (n);
 }
-
-int	parse_args(int ac, char **av, t_data *data)
+int parse_args(int ac, char **av, t_data *data)
 {
-
 	data->philos_num = parse_num(av[1]);
 	data->time_to_die = parse_num(av[2]);
 	data->time_to_eat = parse_num(av[3]);
 	data->time_to_sleep = parse_num(av[4]);
-	gettimeofday(&data->start_time, NULL);
-	if (ac == 5)
+	if (ac >= 5)
 	{
 		data->meal_count = parse_num(av[5]);
 		if (data->meal_count == ERROR)
-			return (ERROR);
+			return (printf(MSG_USAGE), ERROR);
 	}
 	else
 		data->meal_count = -1;
 	if (data->philos_num == ERROR
-		|| data->time_to_die == ERROR
-		|| data->time_to_eat == ERROR
-		|| data->time_to_sleep == ERROR)
-		return (ERROR);
+			|| data->time_to_die == ERROR
+			|| data->time_to_eat == ERROR
+			|| data->time_to_sleep == ERROR)
+		return (printf(MSG_USAGE), ERROR);
 	else
 		return (SUCCESS);
+}
+
+int	init_data(int ac, char **av, t_data *data)
+{
+	if (parse_args(ac, av, data) == ERROR)
+		return ERROR;
+	gettimeofday(&data->start_time, NULL);
+	if (pthread_mutex_init(&data->state_barrier, NULL))
+		return ERROR;
+	return SUCCESS;
 }

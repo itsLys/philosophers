@@ -7,7 +7,7 @@ NAME		= philo
 CC			= cc
 # CFLAGS		= -Wall -Wextra -Werror -ggdb -fsanitize=thread
 CFLAGS		= -Wall -Wextra -Werror -ggdb -pthread
-# LFLAGS		= -fsanitize=thread
+# LFLAGS		= -lc -pthread
 AR			= ar rcs
 INCLUDES	= -I./headers/
 SRC_DIR		= src
@@ -36,4 +36,4 @@ fclean: clean
 
 re: fclean all
 
-.PHONY: clean
+# .PHONY: clean
