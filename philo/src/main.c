@@ -27,43 +27,46 @@ void	free_resources(int num, t_data *data)
 	free(data);
 }
 
-long	get_timestamp(t_time curr, t_time start)
+long	timeval_to_ms(struct timeval time)
 {
-	long	m_start_time;
-	long	m_current_time;
-
-	m_start_time = start.tv_sec * 1000 + start.tv_usec / 1000;
-	m_current_time = curr.tv_sec * 1000 + curr.tv_usec / 1000;
-	return m_current_time - m_start_time;
+	return (time.tv_sec * 1000 + time.tv_usec / 1000);
 }
 
-void print_state(t_data *data, t_philo *philo, char *msg)
+long	get_timestamp_ms(struct timeval t0)
 {
-	struct timeval	current_time;
-	long			timestamp;
+	t_time time;
 
-	gettimeofday(&current_time, NULL);
-	timestamp = get_timestamp(current_time, data->start_time);
-	printf("%ld %d %s", timestamp, philo->num, msg);
+	gettimeofday(&time, NULL);
+	return (timeval_to_ms(time) - timeval_to_ms(t0));
+}
+
+void print_timestamp(struct timeval t0, int num, char *msg)
+{
+	long	timestamp;
+
+	timestamp = get_timestamp_ms(t0);
+	printf("%ld %d %s", timestamp, num, msg);
 }
 
 void take_forks(t_data *data, t_philo *philo)
 {
 	pthread_mutex_lock(&philo->left_philo->fork);
-	print_state(data, philo, MSG_TAKE);
+	print_timestamp(data->t0, philo->num, MSG_TAKE);
 	pthread_mutex_lock(&philo->fork);
-	print_state(data, philo, MSG_TAKE);
+	print_timestamp(data->t0, philo->num, MSG_TAKE);
 }
 
 void eat(t_data *data, t_philo *philo)
 {
-	pthread_mutex_lock(&data->state_barrier);
-	gettimeofday(&philo->last_meal_time, NULL);
+	t_time	curr;
+	gettimeofday(&curr, NULL);
+	pthread_mutex_lock(&data->state_guard);
+	philo->last_meal_time_ms = timeval_to_ms(curr);
 	philo->state = EATING;
-	pthread_mutex_unlock(&data->state_barrier);
-	print_state(data, philo, MSG_EAT);
-	usleep(data->time_to_eat * 1000);
 	philo->meals_eaten++;
+	pthread_mutex_unlock(&data->state_guard);
+	print_timestamp(data->t0, philo->num, MSG_EAT);
+	usleep(data->time_to_eat * 1000);
 }
 
 void put_down_forks(t_philo *philo)
@@ -74,19 +77,19 @@ void put_down_forks(t_philo *philo)
 
 void ft_sleep(t_data *data, t_philo *philo)
 {
-	pthread_mutex_lock(&data->state_barrier);
+	pthread_mutex_lock(&data->state_guard);
 	philo->state = SLEEPING;
-	pthread_mutex_unlock(&data->state_barrier);
-	print_state(data, philo, MSG_SLEEP);
+	pthread_mutex_unlock(&data->state_guard);
+	print_timestamp(data->t0, philo->num, MSG_SLEEP);
 	usleep(data->time_to_sleep * 1000);
 }
 
 void think(t_data *data, t_philo *philo)
 {
-	pthread_mutex_lock(&data->state_barrier);
+	pthread_mutex_lock(&data->state_guard);
 	philo->state = THINKING;
-	pthread_mutex_unlock(&data->state_barrier);
-	print_state(data, philo, MSG_THINK);
+	pthread_mutex_unlock(&data->state_guard);
+	print_timestamp(data->t0, philo->num, MSG_THINK);
 }
 
 void *routine(void *arg)
@@ -144,44 +147,44 @@ int	join_threads(t_data *data)
 	return (SUCCESS);
 }
 
-int	should_stop(t_data *data)
+int	check_state(t_data *data, int *last_meal_count)
 {
-	int	i;
+	int i;
+	t_time	current;
+	long	current_ms;
 
 	i = 0;
+	pthread_mutex_lock(&data->state_guard);
+	gettimeofday(&current, NULL);
+
 	while (i < data->philos_num)
 	{
-		if (data->philos[i].state == DEAD)
-			return TRUE;
+		if (data->philos[i].state == EATING)
+		{
+			last_meal_count[i] = data->philos[i].meals_eaten;
+		}
 		i++;
 	}
-	return FALSE;
-}
-
-int	check_state(t_data *data)
-{
-	// int i;
-	// t_time state_change_time;
-	//
-	// i = 0;
-	// pthread_mutex_lock(&data->state_barrier);
-	// while (i < data->philos_num)
-	// {
-	// 	if (data->philos[i].state == THINKING)
-	// 	{
-	// 		gettimeofday(&state_change_time, NULL);
-	// 	}
-	// }
+	
+	// if state is eating
+	// take last meal count;
+	// and go read the value of last meal time, check if current time minus it, greater
+	// then time to die    50ms, cur == 55, time to die == 10;
+	// 55 - 50 == 5 > timetodie ? NO
+	// if YES
+	// check if the meal count is the same, NO? philo is dead
 }
 
 void monitor(t_data *data)
 {
-	// while (should_stop(data) == FALSE)
-	// {
-	// 	check_state(data);
-	// }
-	// checks each philo's state?
-	// check
+	static int	*last_meal_count;
+
+	last_meal_count = malloc(data->philos_num);
+	// TODO: check malloc
+	while (1)
+	{
+		check_state(data, last_meal_count);
+	}
 }
 
 int main(int ac, char **av)
@@ -191,10 +194,10 @@ int main(int ac, char **av)
 
 	ac--;
 	if (ac != 4 && ac != 5)
-		return (printf(ERR_MSG), EXIT_FAILURE);
+		return (printf(MSG_USAGE), EXIT_FAILURE);
 	data = malloc(sizeof(t_data));
 	if (parse_args(ac, av, data) == ERROR)
-		return (printf(ERR_MSG), free(data), EXIT_FAILURE);
+		return (printf(MSG_USAGE), free(data), EXIT_FAILURE);
 	philos_created = init_philos(data);
 	if (philos_created < data->philos_num)
 		return (free_resources(philos_created, data), EXIT_FAILURE);

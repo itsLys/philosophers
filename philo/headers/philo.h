@@ -49,7 +49,7 @@ typedef struct s_philo
 	pthread_mutex_t	fork;
 	struct s_philo	*left_philo;
 	int				meals_eaten;
-	t_time			last_meal_time;
+	long			last_meal_time_ms;
 }	t_philo ;
 
 typedef struct s_data
@@ -60,8 +60,8 @@ typedef struct s_data
 	int				time_to_eat;
 	int				time_to_sleep;
 	int				meal_count;
-	t_time			start_time;
-	pthread_mutex_t state_barrier;
+	t_time			t0;
+	pthread_mutex_t state_guard;
 }	t_data ;
 
 typedef struct	s_args
