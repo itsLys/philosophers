@@ -60,7 +60,7 @@ typedef struct s_data
 	int				time_to_eat;
 	int				time_to_sleep;
 	int				meal_count;
-	t_time			t0;
+	long			t0_ms;
 	pthread_mutex_t state_guard;
 }	t_data ;
 
@@ -70,6 +70,13 @@ typedef struct	s_args
 	t_philo	*philo;
 }	t_args;
 
-int	parse_num(char *str);
-int	parse_args(int ac, char **av, t_data *data);
+typedef struct s_history
+{
+	int		last_meal_count;
+	long	last_meal_time_ms;
+}	t_history ;
+
+int		parse_num(char *str);
+int		parse_args(int ac, char **av, t_data *data);
+long	gettimeofday_ms(void);
 #endif // !PHILO_H

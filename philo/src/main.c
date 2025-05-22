@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "philo.h"
+#include <string.h>
 #include <unistd.h>
 
 void	free_resources(int num, t_data *data)
@@ -32,40 +33,43 @@ long	timeval_to_ms(struct timeval time)
 	return (time.tv_sec * 1000 + time.tv_usec / 1000);
 }
 
-long	get_timestamp_ms(struct timeval t0)
+long	gettimeofday_ms(void)
 {
-	t_time time;
+	struct timeval time;
 
 	gettimeofday(&time, NULL);
-	return (timeval_to_ms(time) - timeval_to_ms(t0));
+	return (timeval_to_ms(time));
 }
 
-void print_timestamp(struct timeval t0, int num, char *msg)
+long	get_timestamp_ms(long t0_ms)
+{
+	return (gettimeofday_ms() - t0_ms);
+}
+
+void print_timestamp_ms(long t0_ms, int num, char *msg)
 {
 	long	timestamp;
 
-	timestamp = get_timestamp_ms(t0);
+	timestamp = get_timestamp_ms(t0_ms);
 	printf("%ld %d %s", timestamp, num, msg);
 }
 
 void take_forks(t_data *data, t_philo *philo)
 {
 	pthread_mutex_lock(&philo->left_philo->fork);
-	print_timestamp(data->t0, philo->num, MSG_TAKE);
+	print_timestamp_ms(data->t0_ms, philo->num, MSG_TAKE);
 	pthread_mutex_lock(&philo->fork);
-	print_timestamp(data->t0, philo->num, MSG_TAKE);
+	print_timestamp_ms(data->t0_ms, philo->num, MSG_TAKE);
 }
 
 void eat(t_data *data, t_philo *philo)
 {
-	t_time	curr;
-	gettimeofday(&curr, NULL);
 	pthread_mutex_lock(&data->state_guard);
-	philo->last_meal_time_ms = timeval_to_ms(curr);
+	philo->last_meal_time_ms = gettimeofday_ms();
 	philo->state = EATING;
 	philo->meals_eaten++;
 	pthread_mutex_unlock(&data->state_guard);
-	print_timestamp(data->t0, philo->num, MSG_EAT);
+	print_timestamp_ms(data->t0_ms, philo->num, MSG_EAT);
 	usleep(data->time_to_eat * 1000);
 }
 
@@ -80,7 +84,7 @@ void ft_sleep(t_data *data, t_philo *philo)
 	pthread_mutex_lock(&data->state_guard);
 	philo->state = SLEEPING;
 	pthread_mutex_unlock(&data->state_guard);
-	print_timestamp(data->t0, philo->num, MSG_SLEEP);
+	print_timestamp_ms(data->t0_ms, philo->num, MSG_SLEEP);
 	usleep(data->time_to_sleep * 1000);
 }
 
@@ -89,7 +93,7 @@ void think(t_data *data, t_philo *philo)
 	pthread_mutex_lock(&data->state_guard);
 	philo->state = THINKING;
 	pthread_mutex_unlock(&data->state_guard);
-	print_timestamp(data->t0, philo->num, MSG_THINK);
+	print_timestamp_ms(data->t0_ms, philo->num, MSG_THINK);
 }
 
 void *routine(void *arg)
@@ -147,25 +151,25 @@ int	join_threads(t_data *data)
 	return (SUCCESS);
 }
 
-int	check_state(t_data *data, int *last_meal_count)
+int	update_history(t_data *data, t_history *history)
 {
 	int i;
-	t_time	current;
-	long	current_ms;
 
 	i = 0;
 	pthread_mutex_lock(&data->state_guard);
-	gettimeofday(&current, NULL);
-
 	while (i < data->philos_num)
 	{
 		if (data->philos[i].state == EATING)
 		{
-			last_meal_count[i] = data->philos[i].meals_eaten;
+			history[i].last_meal_count = data->philos[i].meals_eaten;
+			history[i].last_meal_time_ms = data->philos[i].last_meal_time_ms;
 		}
+		pthread_mutex_unlock(&data->state_guard);
+		pthread_mutex_lock(&data->state_guard);
 		i++;
 	}
-	
+	pthread_mutex_unlock(&data->state_guard);
+
 	// if state is eating
 	// take last meal count;
 	// and go read the value of last meal time, check if current time minus it, greater
@@ -175,15 +179,44 @@ int	check_state(t_data *data, int *last_meal_count)
 	// check if the meal count is the same, NO? philo is dead
 }
 
-void monitor(t_data *data)
+void	check_starved(t_data *data, t_history *history)
 {
-	static int	*last_meal_count;
+	int i;
+	long	time_passed;
 
-	last_meal_count = malloc(data->philos_num);
-	// TODO: check malloc
+	i = 0;
+	pthread_mutex_lock(&data->state_guard);
 	while (1)
 	{
-		check_state(data, last_meal_count);
+		if (data->philos[i].meals_eaten == history->last_meal_count)
+		{
+			time_passed = gettimeofday_ms() - history->last_meal_time_ms;
+			if (time_passed > data->time_to_die)
+			{
+				data->philos[i].state = DEAD;
+				pthread_mutex_unlock(&data->state_guard);
+				return;
+			}
+		}
+		pthread_mutex_unlock(&data->state_guard);
+		pthread_mutex_lock(&data->state_guard);
+		i++;
+		if (i == data->philos_num)
+			i = 0;
+	}
+	pthread_mutex_unlock(&data->state_guard);
+}
+
+void monitor(t_data *data)
+{
+	t_history *meal_history;
+
+	meal_history = malloc(data->philos_num * sizeof(t_history));// TODO: check malloc
+	memset(meal_history, 0, data->philos_num * sizeof(t_history));
+	while (1)
+	{
+		update_history(data, meal_history);
+		check_starved(data, meal_history);
 	}
 }
 
