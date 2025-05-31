@@ -77,6 +77,6 @@ typedef struct s_history
 }	t_history ;
 
 int		parse_num(char *str);
-int		parse_args(int ac, char **av, t_data *data);
+int	init_data(int ac, char **av, t_data *data);
 long	gettimeofday_ms(void);
 #endif // !PHILO_H
