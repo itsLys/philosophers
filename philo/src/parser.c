@@ -53,7 +53,9 @@ int	init_data(int ac, char **av, t_data *data)
 	if (parse_args(ac, av, data) == ERROR)
 		return ERROR;
 	data->t0_ms = gettimeofday_ms();
-	if (pthread_mutex_init(&data->state_guard, NULL))
+	data->should_stop = FALSE;
+	if (pthread_mutex_init(&data->state_guard, NULL)
+			|| pthread_mutex_init(&data->output_guard, NULL))
 		return ERROR;
 	return SUCCESS;
 }

@@ -62,6 +62,8 @@ typedef struct s_data
 	int				meal_count;
 	long			t0_ms;
 	pthread_mutex_t state_guard;
+	pthread_mutex_t	output_guard;
+	int				should_stop;
 }	t_data ;
 
 typedef struct	s_args
