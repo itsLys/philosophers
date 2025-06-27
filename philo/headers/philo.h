@@ -6,7 +6,7 @@
 /*   By: ihajji <ihajji@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 16:20:32 by ihajji            #+#    #+#             */
-/*   Updated: 2025/04/17 16:39:54 by ihajji           ###   ########.fr       */
+/*   Updated: 2025/06/27 19:59:53 by ihajji           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,6 +79,6 @@ typedef struct s_history
 }	t_history ;
 
 int		parse_num(char *str);
-int	init_data(int ac, char **av, t_data *data);
+int		init_data(int ac, char **av, t_data *data);
 long	gettimeofday_ms(void);
 #endif // !PHILO_H

@@ -123,8 +123,9 @@ void think(t_data *data, t_philo *philo)
 	philo->state = THINKING;
 	pthread_mutex_unlock(&data->state_guard);
 	print_timestamp_ms(data, philo->num, MSG_THINK);
-	if (data->philos_num % 2 != 0)
-		usleep((data->time_to_die - (data->time_to_sleep + data->time_to_eat)) * 1000);
+	usleep(800)
+	// if (data->philos_num % 2 != 0)
+	// 	usleep((data->time_to_die - (data->time_to_sleep + data->time_to_eat)) * 1000);
 }
 
 void *routine(void *arg)
