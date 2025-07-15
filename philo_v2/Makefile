@@ -3,8 +3,14 @@ CC			= cc
 # CFLAGS		= -Wall -Wextra -Werror -ggdb -fsanitize=thread
 CFLAGS		= -Wall -Wextra -Werror -ggdb -pthread
 LFLAGS		= -pthread
-SRC_DIR		= src
-SRC			= parser.c
+SRC			= parser.c \
+			  main.c \
+			  routine.c \
+			  cleanup.c \
+			  time.c \
+			  utils.c \
+			  forks.c \
+			  init.c
 OBJ_DIR		= obj
 OBJ			= $(addprefix $(OBJ_DIR)/, $(SRC:.c=.o))
 

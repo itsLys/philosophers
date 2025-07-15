@@ -6,7 +6,7 @@
 /*   By: ihajji <ihajji@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 16:37:19 by ihajji            #+#    #+#             */
-/*   Updated: 2025/06/27 20:30:50 by ihajji           ###   ########.fr       */
+/*   Updated: 2025/07/01 11:44:58 by ihajji           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ int parse_args(int ac, char **av, t_data *data)
 	data->time_to_die = parse_num(av[2]);
 	data->time_to_eat = parse_num(av[3]);
 	data->time_to_sleep = parse_num(av[4]);
-	if (ac >= 5)
+	if (ac >= 6)
 	{
 		data->meal_count = parse_num(av[5]);
 		if (data->meal_count == ERROR)
@@ -49,33 +49,60 @@ int parse_args(int ac, char **av, t_data *data)
 		return (EXIT_SUCCESS);
 }
 
-int	init_data(int ac, char **av, t_data *data)
-{
-	if (parse_args(ac, av, data) == ERROR)
-		return ERROR;
-	data->start_time_ms = gettimeofday_ms();
-	data->should_stop = FALSE;
-	if (pthread_mutex_init(&data->state_guard, NULL)
-			|| pthread_mutex_init(&data->output_guard, NULL))
-		return ERROR;
-	return EXIT_SUCCESS;
-}
+// int init_philos(t_data *data)
+// {
+// 	t_args *args;
+// 	int		i;
+//
+// 	data->philos = malloc(data->philos_num * sizeof(t_philo));
+// 	memset(data->philos, 0, data->philos_num * sizeof(t_philo));
+// 	args = malloc(data->philos_num * sizeof(t_args)); // TODO: check malloc
+// 	if (data->philos == NULL)
+// 		return (ERROR);
+// 	i = 0;
+// 	data->philos[0].left_philo = &data->philos[data->philos_num - 1];
+// 	while (i < data->philos_num)
+// 	{
+// 		args[i] = (t_args) {data, data->philos + i} ;
+// 		data->philos[i].num = i;
+// 		data->philos[i].state = -1;
+// 		if (pthread_mutex_init(&data->philos[i].fork, NULL))
+// 			return (ERROR);
+// 		if (i > 0)
+// 			data->philos[i].left_philo = &data->philos[i - 1];
+// 		if (pthread_create(&data->philos[i].philo, NULL, &routine, args + i))
+// 			return (i + 1);
+// 		i++;
+// 	}
+// 	return (i);
+// }
+//
+// int	init_data(int ac, char **av, t_data *data)
+// {
+// 	if (parse_args(ac, av, data) == ERROR)
+// 		return (ERROR);
+// 	data->start_time_ms = gettimeofday_ms();
+// 	if (pthread_mutex_init(&data->state_guard, NULL)
+// 			|| pthread_mutex_init(&data->print_guard, NULL))
+// 		return (ERROR);
+// 	return (EXIT_SUCCESS);
+// }
 
-int main(int argc, char **argv)
-{
-	t_data	*data;
-	int		created;
-
-	if (argc != 5 && argc != 6)
-		return (printf(MSG_USAGE), EXIT_FAILURE);
-	data = ft_malloc(sizeof(t_data));
-	if (data == NULL)
-		return EXIT_FAILURE;
-	if (init_data(argc, argv, data) == ERROR)
-		return (printf(MSG_USAGE), free(data), EXIT_FAILURE);
-	created = init_philosophers(data);
-	if (created < data->number_of_philos)
-		return (free_resources(created, data), EXIT_FAILURE);
-	// monitor
-	return EXIT_SUCCESS;
-}
+// int main(int argc, char **argv)
+// {
+// 	t_data	*data;
+// 	int		created;
+//
+// 	if (argc != 5 && argc != 6)
+// 		return (printf(MSG_USAGE), EXIT_FAILURE);
+// 	data = ft_malloc(sizeof(t_data));
+// 	if (data == NULL)
+// 		return EXIT_FAILURE;
+// 	if (init_data(argc, argv, data) == ERROR)
+// 		return (printf(MSG_USAGE), free(data), EXIT_FAILURE);
+// 	created = init_philosophers(data);
+// 	if (created < data->number_of_philos)
+// 		return (free_resources(created, data), EXIT_FAILURE);
+// 	// monitor
+// 	return EXIT_SUCCESS;
+// }
