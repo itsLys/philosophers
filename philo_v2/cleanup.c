@@ -40,8 +40,11 @@ int	join_threads(t_data *data)
 	i = 0;
 	while (i < data->number_of_philos)
 	{
+		printf("freeing resources\n");
+		pthread_mutex_lock(&data->state_guard);
 		if (pthread_join(data->philosophers[i].thread, NULL))
 			return (ERROR);
+		pthread_mutex_unlock(&data->state_guard);
 		i++;
 	}
 	return (SUCCESS);
@@ -49,7 +52,9 @@ int	join_threads(t_data *data)
 
 void	free_resources(t_data *data)
 {
+	pthread_mutex_lock(&data->state_guard);
 	join_threads(data);
+	pthread_mutex_unlock(&data->state_guard);
 	destroy_mutexes(data->number_of_philos, data);
 	free(data->args);
 	free(data->philosophers);

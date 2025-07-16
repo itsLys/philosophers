@@ -14,6 +14,8 @@
 
 void	grab_left_to_right(t_philo *philosopher, t_data *data)
 {
+	if (read_state(philosopher, data) == IS_DEAD)
+		return ;
 	pthread_mutex_lock(philosopher->left_fork);
 	print_timestamp_ms(data, philosopher->number, MSG_TAKE);
 	pthread_mutex_lock(philosopher->right_fork);
@@ -22,6 +24,8 @@ void	grab_left_to_right(t_philo *philosopher, t_data *data)
 
 void	grab_right_to_left(t_philo *philosopher, t_data *data)
 {
+	if (read_state(philosopher, data) == IS_DEAD)
+		return ;
 	pthread_mutex_lock(philosopher->right_fork);
 	print_timestamp_ms(data, philosopher->number, MSG_TAKE);
 	pthread_mutex_lock(philosopher->left_fork);
@@ -30,14 +34,18 @@ void	grab_right_to_left(t_philo *philosopher, t_data *data)
 
 void	grab_forks(t_philo *philosopher, t_data *data)
 {
+	if (read_state(philosopher, data) == IS_DEAD)
+		return ;
 	if (is_even(philosopher->number) == TRUE)
 		grab_left_to_right(philosopher, data);
 	else
 		grab_right_to_left(philosopher, data);
 }
 
-void	put_down_forks(t_philo *philosopher)
+void	put_down_forks(t_philo *philosopher, t_data *data)
 {
+	if (read_state(philosopher, data) == IS_DEAD)
+		return ;
 	pthread_mutex_unlock(philosopher->right_fork);
 	pthread_mutex_unlock(philosopher->left_fork);
 }

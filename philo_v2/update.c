@@ -12,6 +12,16 @@
 
 #include "philo.h"
 
+t_state read_state(t_philo *philosopher, t_data *data)
+{
+	t_state	state;
+
+	pthread_mutex_lock(&data->state_guard);
+	state = philosopher->state;
+	pthread_mutex_unlock(&data->state_guard);
+	return  (state);
+}
+
 void	update_state(t_philo *philosopher, t_state state, char *msg, t_data *data)
 {
 	pthread_mutex_lock(&data->state_guard);

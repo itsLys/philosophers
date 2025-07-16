@@ -110,7 +110,7 @@ void				detach_threads(int number, t_data *data);
 void				grab_left_to_right(t_philo *philosopher, t_data *data);
 void				grab_right_to_left(t_philo *philosopher, t_data *data);
 void				grab_forks(t_philo *philosopher, t_data *data);
-void				put_down_forks(t_philo *philosopher);
+void				put_down_forks(t_philo *philosopher, t_data *data);
 
 // routine
 void				update_state(t_philo *philosopher, t_state state, char *msg, t_data *data);
@@ -123,5 +123,6 @@ void				*routine(void *arg);
 void				update_state(t_philo *philosopher, t_state state, char *msg, t_data *data);
 void				update_last_meal(t_philo *philosopher, t_data *data);
 void				update_meal_count(t_philo *philosopher, t_data *data);
+t_state				read_state(t_philo *philosopher, t_data *data);
 
 #endif // !PHILO_H

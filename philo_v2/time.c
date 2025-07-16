@@ -34,8 +34,6 @@ void print_timestamp_ms(t_data *data, int num, char *msg)
 {
 	long	timestamp;
 
-	if (strcmp(msg, MSG_DIED) == 0)
-		return ;
 	timestamp = get_timestamp_ms(data->start_time_ms);
 	pthread_mutex_lock(&data->print_guard);
 	printf("%ld %d %s", timestamp, num, msg);
