@@ -6,7 +6,7 @@
 /*   By: ihajji <ihajji@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 13:18:46 by ihajji            #+#    #+#             */
-/*   Updated: 2025/04/17 16:39:47 by ihajji           ###   ########.fr       */
+/*   Updated: 2025/07/15 12:52:47 by ihajji           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,23 +29,23 @@ void	free_resources(int num, t_data *data)
 	free(data);
 }
 
-long	timeval_to_ms(struct timeval time)
-{
-	return (time.tv_sec * 1000 + time.tv_usec / 1000);
-}
-
-long	gettimeofday_ms(void)
-{
-	struct timeval time;
-
-	gettimeofday(&time, NULL);
-	return (timeval_to_ms(time));
-}
-
-long	get_timestamp_ms(long t0_ms)
-{
-	return (gettimeofday_ms() - t0_ms);
-}
+// long	timeval_to_ms(struct timeval time)
+// {
+// 	return (time.tv_sec * 1000 + time.tv_usec / 1000);
+// }
+//
+// long	gettimeofday_ms(void)
+// {
+// 	struct timeval time;
+//
+// 	gettimeofday(&time, NULL);
+// 	return (timeval_to_ms(time));
+// }
+//
+// long	get_timestamp_ms(long t0_ms)
+// {
+// 	return (gettimeofday_ms() - t0_ms);
+// }
 
 // TODO: data->should_stop  is not locked properly.
 // Make a function to get the state in a thread safe way.
