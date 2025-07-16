@@ -5,6 +5,7 @@ CFLAGS		= -Wall -Wextra -Werror -ggdb -pthread
 LFLAGS		= -pthread
 SRC			= parser.c \
 			  main.c \
+			  update.c \
 			  routine.c \
 			  cleanup.c \
 			  time.c \
