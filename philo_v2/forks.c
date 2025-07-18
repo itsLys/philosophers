@@ -6,7 +6,7 @@
 /*   By: ihajji <ihajji@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 12:39:36 by ihajji            #+#    #+#             */
-/*   Updated: 2025/07/15 12:51:51 by ihajji           ###   ########.fr       */
+/*   Updated: 2025/07/18 10:12:40 by ihajji           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,3 +49,7 @@ void	put_down_forks(t_philo *philosopher, t_data *data)
 	pthread_mutex_unlock(philosopher->right_fork);
 	pthread_mutex_unlock(philosopher->left_fork);
 }
+// NOTE: make a flag that entails the forks are locked, because when returning from update state
+// it is still holding mutex forks,
+// make a flag, if it is locked, unlock it
+// Allahoma yassir

@@ -56,15 +56,24 @@ int	init_data(int ac, char **av, t_data *data)
 {
 	if (parse_args(ac, av, data) == ERROR)
 		return (ERROR);
+	// init variables
 	data->start_time_ms = gettimeofday_ms();
+	data->should_stop = FALSE;
+	// init_mutexes
 	if (pthread_mutex_init(&data->state_guard, NULL))
 		return (ERROR);
 	if (pthread_mutex_init(&data->print_guard, NULL))
 		return (pthread_mutex_destroy(&data->state_guard), ERROR);
+	if (pthread_mutex_init(&data->simulation, NULL))
+		return (pthread_mutex_destroy(&data->state_guard),
+				pthread_mutex_destroy(&data->print_guard),
+				ERROR);
+	// init_philosophers
 	data->philosophers = ft_malloc(data->number_of_philos * sizeof(t_philo));
 	if (data->philosophers == NULL)
 		return (pthread_mutex_destroy(&data->state_guard),
-			pthread_mutex_destroy(&data->print_guard),
-			ERROR);
+				pthread_mutex_destroy(&data->print_guard),
+				pthread_mutex_init(&data->simulation, NULL),
+				ERROR);
 	return (EXIT_SUCCESS);
 }

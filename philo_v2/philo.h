@@ -6,7 +6,7 @@
 /*   By: ihajji <ihajji@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/27 19:52:17 by ihajji            #+#    #+#             */
-/*   Updated: 2025/07/15 14:59:48 by ihajji           ###   ########.fr       */
+/*   Updated: 2025/07/18 09:46:42 by ihajji           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,6 +62,8 @@ typedef struct s_data
 {
 	pthread_mutex_t state_guard;
 	pthread_mutex_t print_guard;
+	pthread_mutex_t	simulation;
+	int				should_stop;
 	t_philo			*philosophers;
 	int				number_of_philos;
 	int				time_to_die;
@@ -103,7 +105,7 @@ void				print_timestamp_ms(t_data *data, int num, char *msg);
 // cleanup
 void				free_resources(t_data *data);
 int					join_threads(t_data *data);
-void				destroy_mutexes(int number, t_data *data);
+void				destroy_forks(int number, t_data *data);
 void				detach_threads(int number, t_data *data);
 
 // forks
@@ -124,5 +126,10 @@ void				update_state(t_philo *philosopher, t_state state, char *msg, t_data *dat
 void				update_last_meal(t_philo *philosopher, t_data *data);
 void				update_meal_count(t_philo *philosopher, t_data *data);
 t_state				read_state(t_philo *philosopher, t_data *data);
+int					should_stop(int set, t_data *data);
+
+// simulation
+int					is_starving(t_philo *philo, t_data *data);
+int					should_stop(int set, t_data *data);
 
 #endif // !PHILO_H
