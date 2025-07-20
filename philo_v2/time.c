@@ -6,7 +6,7 @@
 /*   By: ihajji <ihajji@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 09:26:55 by ihajji            #+#    #+#             */
-/*   Updated: 2025/07/15 12:51:59 by ihajji           ###   ########.fr       */
+/*   Updated: 2025/07/18 18:58:48 by ihajji           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ void print_timestamp_ms(t_data *data, int num, char *msg)
 	long	timestamp;
 
 	timestamp = get_timestamp_ms(data->start_time_ms);
-	pthread_mutex_lock(&data->print_guard);
+	pthread_mutex_lock(&data->print_lock);
 	printf("%ld %d %s", timestamp, num, msg);
-	pthread_mutex_unlock(&data->print_guard);
+	pthread_mutex_unlock(&data->print_lock);
 }

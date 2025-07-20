@@ -6,7 +6,7 @@
 /*   By: ihajji <ihajji@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 09:32:59 by ihajji            #+#    #+#             */
-/*   Updated: 2025/07/01 11:39:07 by ihajji           ###   ########.fr       */
+/*   Updated: 2025/07/18 19:02:29 by ihajji           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,8 +21,9 @@ int	init_forks(t_data *data)
 	while (i < data->number_of_philos)
 	{
 		left_fork = malloc(sizeof(t_fork));
-		if (left_fork == NULL || pthread_mutex_init(left_fork, NULL))
+		if (left_fork == NULL || pthread_mutex_init(&left_fork->mutex, NULL))
 			return free(left_fork), i;
+		left_fork->state = UNLOCKED;
 		data->philosophers[i].left_fork = left_fork;
 		if (i > 0)
 			data->philosophers[i].right_fork =
@@ -52,6 +53,24 @@ int init_philosophers(t_data *data)
 	return (i);
 }
 
+int	init_mutexes(t_data *data)
+{
+	if (pthread_mutex_init(&data->state_lock, NULL))
+		return (ERROR);
+	if (pthread_mutex_init(&data->print_lock, NULL))
+		return (pthread_mutex_destroy(&data->state_lock), ERROR);
+	if (pthread_mutex_init(&data->simulation, NULL))
+		return (pthread_mutex_destroy(&data->state_lock),
+				pthread_mutex_destroy(&data->print_lock),
+				ERROR);
+	if (pthread_mutex_init(&data->fork_state_lock, NULL))
+		return (pthread_mutex_destroy(&data->state_lock),
+				pthread_mutex_destroy(&data->print_lock),
+				pthread_mutex_destroy(&data->simulation),
+				ERROR);
+	return SUCCESS;
+}
+
 int	init_data(int ac, char **av, t_data *data)
 {
 	if (parse_args(ac, av, data) == ERROR)
@@ -59,21 +78,11 @@ int	init_data(int ac, char **av, t_data *data)
 	// init variables
 	data->start_time_ms = gettimeofday_ms();
 	data->should_stop = FALSE;
+	init_mutexes(data);
 	// init_mutexes
-	if (pthread_mutex_init(&data->state_guard, NULL))
-		return (ERROR);
-	if (pthread_mutex_init(&data->print_guard, NULL))
-		return (pthread_mutex_destroy(&data->state_guard), ERROR);
-	if (pthread_mutex_init(&data->simulation, NULL))
-		return (pthread_mutex_destroy(&data->state_guard),
-				pthread_mutex_destroy(&data->print_guard),
-				ERROR);
 	// init_philosophers
 	data->philosophers = ft_malloc(data->number_of_philos * sizeof(t_philo));
 	if (data->philosophers == NULL)
-		return (pthread_mutex_destroy(&data->state_guard),
-				pthread_mutex_destroy(&data->print_guard),
-				pthread_mutex_init(&data->simulation, NULL),
-				ERROR);
+		return destroy_mutexes(data), ERROR;
 	return (EXIT_SUCCESS);
 }

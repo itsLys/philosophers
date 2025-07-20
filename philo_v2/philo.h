@@ -6,7 +6,7 @@
 /*   By: ihajji <ihajji@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/27 19:52:17 by ihajji            #+#    #+#             */
-/*   Updated: 2025/07/18 09:46:42 by ihajji           ###   ########.fr       */
+/*   Updated: 2025/07/18 19:06:58 by ihajji           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@
 # include <unistd.h>
 
 # define THRESHOLD 3
+# define FAILURE 1
 # define ERROR -1
 # define SUCCESS 0
 # define TRUE 1
@@ -35,6 +36,12 @@
 
 typedef struct timeval t_time;
 
+typedef enum e_fork_state
+{
+	UNLOCKED,
+	LOCKED
+}	t_fork_state ;
+
 typedef enum e_state
 {
 	IS_EATING,
@@ -43,7 +50,11 @@ typedef enum e_state
 	IS_DEAD
 }	t_state;
 
-typedef pthread_mutex_t t_fork;
+typedef struct s_fork
+{
+	int				state;
+	pthread_mutex_t	mutex;
+}	t_fork;
 
 typedef struct s_philo
 {
@@ -60,9 +71,10 @@ typedef struct s_args t_args;
 
 typedef struct s_data
 {
-	pthread_mutex_t state_guard;
-	pthread_mutex_t print_guard;
+	pthread_mutex_t state_lock;
+	pthread_mutex_t print_lock;
 	pthread_mutex_t	simulation;
+	pthread_mutex_t	fork_state_lock;
 	int				should_stop;
 	t_philo			*philosophers;
 	int				number_of_philos;
@@ -107,18 +119,23 @@ void				free_resources(t_data *data);
 int					join_threads(t_data *data);
 void				destroy_forks(int number, t_data *data);
 void				detach_threads(int number, t_data *data);
+void				destroy_mutexes(t_data *data);
 
 // forks
-void				grab_left_to_right(t_philo *philosopher, t_data *data);
-void				grab_right_to_left(t_philo *philosopher, t_data *data);
-void				grab_forks(t_philo *philosopher, t_data *data);
+int					grab_left_to_right(t_philo *philosopher, t_data *data);
+int					grab_right_to_left(t_philo *philosopher, t_data *data);
+int					grab_forks(t_philo *philosopher, t_data *data);
 void				put_down_forks(t_philo *philosopher, t_data *data);
+
+// fork_utils
+t_fork_state		get_fork_state(t_fork *fork, t_data *data);
+void				set_fork_state(t_fork_state state, t_fork *fork, t_data *data);
 
 // routine
 void				update_state(t_philo *philosopher, t_state state, char *msg, t_data *data);
-void				ph_eat(t_philo *philosopher, t_data *data);
-void				ph_sleep(t_philo *philosopher, t_data *data);
-void				ph_think(t_philo *philosopher, t_data *data);
+int					ph_eat(t_philo *philosopher, t_data *data);
+int					ph_sleep(t_philo *philosopher, t_data *data);
+int					ph_think(t_philo *philosopher, t_data *data);
 void				*routine(void *arg);
 
 // update

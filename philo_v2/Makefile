@@ -12,6 +12,7 @@ SRC			= parser.c \
 			  time.c \
 			  utils.c \
 			  forks.c \
+			  fork_utils.c \
 			  init.c
 OBJ_DIR		= obj
 OBJ			= $(addprefix $(OBJ_DIR)/, $(SRC:.c=.o))
