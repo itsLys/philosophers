@@ -41,8 +41,8 @@ void	destroy_forks(int number, t_data *data)
 		if (get_fork_state(data->philosophers[i].left_fork, data) == UNLOCKED)
 			pthread_mutex_destroy(&(data->philosophers[i].left_fork->mutex));
 		else
-			dprintf(2, "%d is still holding fork: %p!!!\n", 
-					data->philosophers[i].number, 
+			dprintf(2, "%d is still holding fork: %p!!!\n",
+					data->philosophers[i].number,
 					data->philosophers[i].left_fork);
 		free(data->philosophers[i++].left_fork);
 	}
@@ -53,12 +53,13 @@ int	join_threads(t_data *data)
 	int i;
 
 	i = 0;
-	dprintf(2, "freeing resources\n");
 	while (i < data->number_of_philos)
 	{
+		// dprintf(2, "freeing resources %d\n", i);
 		// pthread_mutex_lock(&data->state_guard);
 		if (pthread_join(data->philosophers[i].thread, NULL))
 			return (ERROR);
+		// dprintf(2, "freeing resources %d\n", i);
 		// pthread_mutex_unlock(&data->state_guard);
 		i++;
 	}
@@ -76,8 +77,8 @@ void	destroy_mutexes(t_data *data)
 void	free_resources(t_data *data)
 {
 	// pthread_mutex_lock(&data->state_guard);
-	join_threads(data);
 	// pthread_mutex_unlock(&data->state_guard);
+	join_threads(data);
 	destroy_forks(data->number_of_philos, data);
 	destroy_mutexes(data);
 	free(data->args);

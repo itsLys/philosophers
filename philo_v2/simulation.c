@@ -39,5 +39,6 @@ int	should_stop(int set, t_data *data)
 	pthread_mutex_lock(&data->simulation);
 	should_stop = data->should_stop;
 	pthread_mutex_unlock(&data->simulation);
+	// dprintf(2, "%d\n", should_stop);
 	return (should_stop);
 }

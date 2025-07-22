@@ -16,16 +16,14 @@
 
 void	lock_fork(t_fork *fork, t_data *data)
 {
-	pthread_mutex_lock(&data->fork_state_lock);
 	pthread_mutex_lock(&fork->mutex);
+	pthread_mutex_lock(&data->fork_state_lock);
 	fork->state = LOCKED;
 	pthread_mutex_unlock(&data->fork_state_lock);
 }
 
 int	grab_left_to_right(t_philo *philosopher, t_data *data)
 {
-	if (read_state(philosopher, data) == IS_DEAD || should_stop(0, data))
-		return FAILURE;
 	lock_fork(philosopher->left_fork, data);
 	print_timestamp_ms(data, philosopher->number, MSG_TAKE);
 	lock_fork(philosopher->right_fork, data);
@@ -35,8 +33,6 @@ int	grab_left_to_right(t_philo *philosopher, t_data *data)
 
 int	grab_right_to_left(t_philo *philosopher, t_data *data)
 {
-	if(read_state(philosopher, data) == IS_DEAD || should_stop(0, data))
-		return FAILURE;
 	lock_fork(philosopher->right_fork, data);
 	print_timestamp_ms(data, philosopher->number, MSG_TAKE);
 	lock_fork(philosopher->left_fork, data);
@@ -66,8 +62,12 @@ int		grab_forks(t_philo *philosopher, t_data *data)
 void	drop_fork(t_fork *fork, t_data *data)
 {
 	pthread_mutex_lock(&data->fork_state_lock);
+	// dprintf(2, "still active %p\n", fork);
 	if (fork->state == LOCKED)
+	{
 		pthread_mutex_unlock(&fork->mutex);
+		fork->state = UNLOCKED;
+	}
 	pthread_mutex_unlock(&data->fork_state_lock);
 }
 
