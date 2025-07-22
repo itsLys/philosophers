@@ -14,6 +14,9 @@
 
 int	ph_eat(t_philo *philosopher, t_data *data)
 {
+	// if (should_stop(FALSE, data))
+	// 	return dprintf(2, "%d returned from eat\n", philosopher->number), FAILURE;
+	grab_forks(philosopher, data);
 	update_state(philosopher, IS_EATING, MSG_EAT, data);
 	update_last_meal(philosopher, data);
 	update_meal_count(philosopher, data);
@@ -24,6 +27,8 @@ int	ph_eat(t_philo *philosopher, t_data *data)
 
 int ph_sleep(t_philo *philosopher, t_data *data)
 {
+	// if (should_stop(FALSE, data))
+	// 	return dprintf(2, "%d returned from sleep\n", philosopher->number), FAILURE;
 	update_state(philosopher, IS_SLEEPING, MSG_SLEEP, data);
 	ft_sleep(data->time_to_sleep, data);
 	return SUCCESS;
@@ -31,7 +36,10 @@ int ph_sleep(t_philo *philosopher, t_data *data)
 
 int ph_think(t_philo *philosopher, t_data *data)
 {
+	// if (should_stop(FALSE, data))
+	// 	return dprintf(2, "%d returned from think\n", philosopher->number), FAILURE;
 	update_state(philosopher, IS_THINKING, MSG_THINK, data);
+	usleep(800);
 	return  SUCCESS;
 }
 
@@ -45,7 +53,7 @@ void *routine(void *arg)
 	while (should_stop(FALSE, data) == 0)
 	{
 		ph_eat(philosopher, data);
-		ph_sleep(philosopher, data) ;
+		ph_sleep(philosopher, data);
 		ph_think(philosopher, data);
 	}
 	return NULL;

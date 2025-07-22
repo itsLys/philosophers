@@ -17,7 +17,7 @@ int	is_starving(t_philo *philo, t_data *data)
 	pthread_mutex_lock(&data->state_lock);
 	if (get_timestamp_ms(data->start_time_ms)
 			- philo->last_meal_time_ms
-			>= data->time_to_die)
+			> data->time_to_die)
 	{
 		pthread_mutex_unlock(&data->state_lock);
 		return TRUE;

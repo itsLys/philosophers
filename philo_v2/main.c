@@ -12,25 +12,67 @@
 
 #include "philo.h"
 
+
+/* full: full philosopher: number of philosophers that have eaten enough */
+
+int check_death(t_data *data)
+{
+	int	i;
+
+	i = 0;
+	while (i < data->number_of_philos)
+	{
+		if (is_starving(data->philosophers + i, data))
+		{
+			update_state(data->philosophers + i, IS_DEAD, MSG_DIED, data);
+			should_stop(TRUE, data);
+			return FAILURE;
+		}
+		i++;
+	}
+	return SUCCESS;
+}
+
+int	is_full(t_philo *philo, t_data *data)
+{
+	int	is_full;
+
+	pthread_mutex_lock(&data->state_lock);
+	is_full = philo->is_full;
+	pthread_mutex_unlock(&data->state_lock);
+	return is_full;
+}
+
+int check_full(t_data *data)
+{
+	int	i;
+	int	n;
+
+	n = 0;
+	i = 0;
+	while (i < data->number_of_philos)
+	{
+		if (is_full(data->philosophers + i, data))
+			n++;
+		i++;
+	}
+	if (n == data->number_of_philos)
+	{
+		should_stop(TRUE, data);
+		return FAILURE;
+	}
+	return  SUCCESS;
+}
+
 void monitor(t_data *data)
 {
-	int i;
-
 	usleep(500);
-	i = 0;
 	while (1)
 	{
-		while (i < data->number_of_philos)
-		{
-			if (is_starving(data->philosophers + i, data))
-			{
-				update_state(data->philosophers + i, IS_DEAD, MSG_DIED, data);
-				should_stop(TRUE, data);
-				return;
-			}
-			i++;
-		}
-		i = 0;
+		if (check_death(data))
+			return ;
+		if (data->meal_count > -1 && check_full(data))
+			return ;
 	}
 }
 

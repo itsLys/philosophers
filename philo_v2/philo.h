@@ -65,6 +65,7 @@ typedef struct s_philo
 	int				meals_eaten;
 	int				number;
 	long			last_meal_time_ms;
+	int				is_full;
 }	t_philo ;
 
 typedef struct s_args t_args;

@@ -30,10 +30,11 @@ int		is_even(int n)
 
 void	ft_sleep(long time, t_data *data)
 {
-	long start;
-
-	start = get_timestamp_ms(data->start_time_ms);
-	usleep((time - THRESHOLD) * 1000);
+	long start = get_timestamp_ms(data->start_time_ms);
 	while (get_timestamp_ms(data->start_time_ms) - start < time)
-		;
+	{
+		if (should_stop(FALSE, data))
+			break;
+		usleep(10);
+	}
 }

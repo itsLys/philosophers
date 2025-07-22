@@ -37,6 +37,8 @@ t_state read_state(t_philo *philosopher, t_data *data)
 
 void	update_state(t_philo *philosopher, t_state state, char *msg, t_data *data)
 {
+	if (should_stop(FALSE, data))
+		return ;
 	pthread_mutex_lock(&data->state_lock);
 	philosopher->state = state;
 	pthread_mutex_unlock(&data->state_lock);
@@ -54,6 +56,8 @@ void	update_meal_count(t_philo *philosopher, t_data *data)
 {
 	pthread_mutex_lock(&data->state_lock);
 	philosopher->meals_eaten++;
+	if (philosopher->meals_eaten >= data->meal_count)
+		philosopher->is_full = TRUE;
 	pthread_mutex_unlock(&data->state_lock);
 }
 
