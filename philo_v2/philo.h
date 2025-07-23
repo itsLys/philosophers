@@ -6,7 +6,7 @@
 /*   By: ihajji <ihajji@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/27 19:52:17 by ihajji            #+#    #+#             */
-/*   Updated: 2025/07/18 19:06:58 by ihajji           ###   ########.fr       */
+/*   Updated: 2025/07/23 12:05:53 by ihajji           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -130,7 +130,8 @@ void				put_down_forks(t_philo *philosopher, t_data *data);
 
 // fork_utils
 t_fork_state		get_fork_state(t_fork *fork, t_data *data);
-void				set_fork_state(t_fork_state state, t_fork *fork, t_data *data);
+void				lock_fork(t_fork *fork, t_data *data);
+void				unlock_fork(t_fork *fork, t_data *data);
 
 // routine
 void				update_state(t_philo *philosopher, t_state state, char *msg, t_data *data);
@@ -146,8 +147,13 @@ void				update_meal_count(t_philo *philosopher, t_data *data);
 t_state				read_state(t_philo *philosopher, t_data *data);
 int					should_stop(int set, t_data *data);
 
-// simulation
-int					is_starving(t_philo *philo, t_data *data);
+// monitor
+void				monitor(t_data *data);
 int					should_stop(int set, t_data *data);
+
+// monitor utils
+int					is_starving(t_philo *philo, t_data *data);
+int					is_full(t_philo *philo, t_data *data);
+
 
 #endif // !PHILO_H

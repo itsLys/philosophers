@@ -36,7 +36,7 @@ int parse_args(int ac, char **av, t_data *data)
 	{
 		data->meal_count = parse_num(av[5]);
 		if (data->meal_count == ERROR)
-			return (printf(MSG_USAGE), ERROR);
+			return (ERROR);
 	}
 	else
 		data->meal_count = -1;
@@ -44,7 +44,7 @@ int parse_args(int ac, char **av, t_data *data)
 			|| data->time_to_die == ERROR
 			|| data->time_to_eat == ERROR
 			|| data->time_to_sleep == ERROR)
-		return (printf(MSG_USAGE), ERROR);
+		return (ERROR);
 	else
 		return (EXIT_SUCCESS);
 }

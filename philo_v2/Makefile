@@ -5,7 +5,8 @@ CFLAGS		= -Wall -Wextra -Werror -ggdb -pthread
 LFLAGS		= -pthread
 SRC			= parser.c \
 			  main.c \
-			  simulation.c \
+			  monitor.c \
+			  monitor_utils.c \
 			  update.c \
 			  routine.c \
 			  cleanup.c \
@@ -13,6 +14,7 @@ SRC			= parser.c \
 			  utils.c \
 			  forks.c \
 			  fork_utils.c \
+			  sleep.c \
 			  init.c
 OBJ_DIR		= obj
 OBJ			= $(addprefix $(OBJ_DIR)/, $(SRC:.c=.o))
@@ -36,4 +38,4 @@ fclean: clean
 
 re: fclean all
 
-# .PHONY: clean
+.PHONY: clean

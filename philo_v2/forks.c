@@ -12,16 +12,6 @@
 
 #include "philo.h"
 
-// lock the mutex and set the flag to locked
-
-void	lock_fork(t_fork *fork, t_data *data)
-{
-	pthread_mutex_lock(&fork->mutex);
-	pthread_mutex_lock(&data->fork_state_lock);
-	fork->state = LOCKED;
-	pthread_mutex_unlock(&data->fork_state_lock);
-}
-
 int	grab_left_to_right(t_philo *philosopher, t_data *data)
 {
 	lock_fork(philosopher->left_fork, data);
@@ -59,26 +49,8 @@ int		grab_forks(t_philo *philosopher, t_data *data)
 	return status;
 }
 
-void	drop_fork(t_fork *fork, t_data *data)
-{
-	pthread_mutex_lock(&data->fork_state_lock);
-	// dprintf(2, "still active %p\n", fork);
-	if (fork->state == LOCKED)
-	{
-		pthread_mutex_unlock(&fork->mutex);
-		fork->state = UNLOCKED;
-	}
-	pthread_mutex_unlock(&data->fork_state_lock);
-}
-
 void	put_down_forks(t_philo *philosopher, t_data *data)
 {
-	drop_fork(philosopher->right_fork, data);
-	drop_fork(philosopher->left_fork, data);
-	// pthread_mutex_unlock(philosopher->right_fork);
-	// pthread_mutex_unlock(philosopher->left_fork);
+	unlock_fork(philosopher->right_fork, data);
+	unlock_fork(philosopher->left_fork, data);
 }
-// NOTE: make a flag that entails the forks are locked, because when returning from update state
-// it is still holding mutex forks,
-// make a flag, if it is locked, unlock it
-// Allahoma yassir

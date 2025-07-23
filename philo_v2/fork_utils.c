@@ -22,9 +22,21 @@ t_fork_state	get_fork_state(t_fork *fork, t_data *data)
 	return state;
 }
 
-// void	set_fork_state(t_fork_state state, t_fork *fork, t_data *data)
-// {
-// 	pthread_mutex_lock(&data->fork_state_lock);
-// 	fork->state = state;
-// 	pthread_mutex_unlock(&data->fork_state_lock);
-// }
+void	lock_fork(t_fork *fork, t_data *data)
+{
+	pthread_mutex_lock(&fork->mutex);
+	pthread_mutex_lock(&data->fork_state_lock);
+	fork->state = LOCKED;
+	pthread_mutex_unlock(&data->fork_state_lock);
+}
+
+void	unlock_fork(t_fork *fork, t_data *data)
+{
+	pthread_mutex_lock(&data->fork_state_lock);
+	if (fork->state == LOCKED)
+	{
+		pthread_mutex_unlock(&fork->mutex);
+		fork->state = UNLOCKED;
+	}
+	pthread_mutex_unlock(&data->fork_state_lock);
+}
