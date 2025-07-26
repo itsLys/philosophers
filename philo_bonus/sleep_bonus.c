@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   sleep.c                                            :+:      :+:    :+:   */
+/*   sleep_bonus.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ihajji <ihajji@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 11:55:25 by ihajji            #+#    #+#             */
-/*   Updated: 2025/07/23 11:55:46 by ihajji           ###   ########.fr       */
+/*   Updated: 2025/07/26 10:48:45 by ihajji           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ static void	ft_sleep_in_chuncks(long time, t_data *data)
 	start = get_timestamp_ms(data->start_time_ms);
 	while (get_timestamp_ms(data->start_time_ms) - start < time)
 	{
-		if (should_stop(FALSE, data))
+		if (data->should_stop)
 			break;
 		usleep(10);
 	}

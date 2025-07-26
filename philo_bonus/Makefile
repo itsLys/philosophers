@@ -5,9 +5,14 @@ CFLAGS		= -Wall -Wextra -Werror -ggdb -pthread
 LFLAGS		= -pthread
 SRC			= init_bonus.c \
 			  main_bonus.c \
+			  routine_bonus.c \
+			  forks_bonus.c \
+			  update_bonus.c \
+			  cleanup_bonus.c \
 			  parser_bonus.c \
 			  sleep_bonus.c \
-			  time_bonus.c 
+			  time_bonus.c \
+			  utils_bonus.c
 OBJ_DIR		= obj
 OBJ			= $(addprefix $(OBJ_DIR)/, $(SRC:.c=.o))
 

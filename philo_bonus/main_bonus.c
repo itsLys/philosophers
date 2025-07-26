@@ -1,16 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   main_bonus.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ihajji <ihajji@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 09:23:05 by ihajji            #+#    #+#             */
-/*   Updated: 2025/07/23 10:47:33 by ihajji           ###   ########.fr       */
+/*   Updated: 2025/07/26 12:06:44 by ihajji           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo_bonus.h"
+
+void monitor(t_data *data)
+{
+	sem_wait(data->dead_philosophers);
+	kill_children(data->number_of_philos, data);
+	clean_exit(SUCCESS, data);
+}
 
 int main(int argc, char **argv)
 {
@@ -20,16 +27,16 @@ int main(int argc, char **argv)
 	if (argc != 5 && argc != 6)
 		return (printf(MSG_USAGE), EXIT_FAILURE);
 	if (init_data(argc, argv, &data) == ERROR)
-		return (EXIT_FAILURE);
-	// created = init_forks(&data);
-	// if (created < data.number_of_philos)
-	// 	return (destroy_forks(created, &data), EXIT_FAILURE);
+		return (dprintf(2, "daskljdaskj\n"), EXIT_FAILURE);
 	created = init_philosophers(&data);
 	if (created < data.number_of_philos)
-		return (destroy_forks(created, &data),
-				detach_threads(created, &data),
-				EXIT_FAILURE);
+	{
+		// ;
+		kill_children(created, &data);
+		clean_exit(FAILURE, &data);
+	}
 	monitor(&data);
-	free_resources(&data);
-	return EXIT_SUCCESS;
+	// kill_children(created, &data);
+	// clean_exit(FAILURE, &data);
+
 }
