@@ -1,29 +1,29 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   routine.c                                          :+:      :+:    :+:   */
+/*   routine_bonus.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ihajji <ihajji@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/15 14:39:39 by ihajji            #+#    #+#             */
-/*   Updated: 2025/07/23 12:10:46 by ihajji           ###   ########.fr       */
+/*   Created: 2025/07/27 16:00:28 by ihajji            #+#    #+#             */
+/*   Updated: 2025/07/27 16:12:43 by ihajji           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "philo.h"
+#include "philo_bonus.h"
 
-int	ph_eat(t_philo *philosopher, t_data *data)
+static int	ph_eat(t_philo *philosopher, t_data *data)
 {
-	grab_forks(philosopher, data);
+	grab_forks(philosopher->number, data);
 	update_state(philosopher, IS_EATING, MSG_EAT, data);
-	update_last_meal(philosopher, data);
-	update_meal_count(philosopher, data);
+	philosopher->last_meal_time_ms = get_timestamp_ms(data->start_time_ms);
+	philosopher->meals_eaten++;
 	ft_sleep(data->time_to_eat, data);
-	put_down_forks(philosopher, data);
+	put_down_forks(data);
 	return SUCCESS;
 }
 
-int ph_sleep(t_philo *philosopher, t_data *data)
+static int ph_sleep(t_philo *philosopher, t_data *data)
 {
 	update_state(philosopher, IS_SLEEPING, MSG_SLEEP, data);
 	ft_sleep(data->time_to_sleep, data);
@@ -46,25 +46,34 @@ long	get_time_left(t_philo *philosopher, t_data *data)
 int ph_think(t_philo *philosopher, t_data *data)
 {
 	update_state(philosopher, IS_THINKING, MSG_THINK, data);
-	// ft_sleep(get_time_left(philosopher, data), data);
+	ft_sleep(get_time_left(philosopher, data), data);
 	// usleep();
 	return (SUCCESS);
 }
 
-void *routine(void *arg)
+int	is_starving(t_philo *philo, t_data *data)
 {
-	t_data	*data;
-	t_philo	*philosopher;
-	(void) data;
-	data = ((t_args *) arg)->data;
-	philosopher = ((t_args *) arg)->philosopher;
+	if (get_timestamp_ms(data->start_time_ms)
+			- philo->last_meal_time_ms
+			> data->time_to_die)
+		return TRUE;
+	return FALSE;
+}
+
+void routine(t_philo *philosopher, t_data *data)
+{
 	if (data->number_of_philos == 1)
 		usleep((data->time_to_die + 10) * 1000);
-	while (should_stop(FALSE, data) == 0)
+	while (1)
 	{
+		if (is_starving(philosopher, data))
+		{
+			update_state(philosopher, IS_DEAD, MSG_DIED, data);
+			sem_post(data->dead_philosophers);
+			break;
+		}
 		ph_eat(philosopher, data);
 		ph_sleep(philosopher, data);
 		ph_think(philosopher, data);
 	}
-	return NULL;
 }

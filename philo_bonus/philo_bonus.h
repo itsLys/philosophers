@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   philo.h                                            :+:      :+:    :+:   */
+/*   philo_bonus.h                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ihajji <ihajji@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/27 19:52:17 by ihajji            #+#    #+#             */
-/*   Updated: 2025/07/23 12:05:53 by ihajji           ###   ########.fr       */
+/*   Updated: 2025/07/27 16:13:17 by ihajji           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,12 +17,16 @@
 # include <stdlib.h>
 # include <pthread.h>
 # include <sys/time.h>
+# include <sys/wait.h>
+# include <sys/types.h>
+# include <signal.h>
 # include <string.h>
 # include <unistd.h>
 # include <semaphore.h>
 # include <stdlib.h>
 # include <fcntl.h>
 
+# define THRESHOLD 3
 # define FAILURE 1
 # define ERROR -1
 # define SUCCESS 0
@@ -30,6 +34,7 @@
 # define FALSE 0
 # define SEM_FORKS "/forks"
 # define SEM_PRINT "/print_guard"
+# define SEM_DEAD_PHILO "/dead_philo"
 # define MSG_TAKE "has taken a fork\n"
 # define MSG_EAT "is eating\n"
 # define MSG_SLEEP "is sleeping\n"
@@ -73,6 +78,7 @@ typedef struct s_data
 	t_philo			*philosophers;
 	sem_t			*forks;
 	sem_t 			*print_lock;
+	sem_t 			*dead_philosophers;
 	int				should_stop;
 	int				number_of_philos;
 	int				time_to_die;
@@ -87,6 +93,10 @@ typedef struct s_data
 int					init_data(int ac, char **av, t_data *data);
 int					init_philosophers(t_data *data);
 
+// cleanup
+void				clear_semaphores(t_data *data);
+void				clean_exit(int status, t_data *data);
+void				kill_children(int created, t_data *data);
 
 //parse
 int					parse_args(int ac, char **av, t_data *data);
@@ -98,10 +108,19 @@ void				*ft_malloc(size_t size);
 void				ft_sleep(long time, t_data *data);
 
 // time
-long				timeval_to_ms(struct timeval time);
 long				gettimeofday_ms(void);
 long				get_timestamp_ms(long t0_ms);
 void				print_timestamp_ms(t_data *data, int num, char *msg);
 
+// update
+void				update_state(t_philo *philosopher, t_state state, char *msg, t_data *data);
+
+// fork
+void				grab_forks(int number, t_data *data);
+
+void				put_down_forks(t_data *data);
+
+// routine
+void				routine(t_philo *philosopher, t_data *data);
 
 #endif // !PHILO_H
