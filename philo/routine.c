@@ -30,16 +30,24 @@ int ph_sleep(t_philo *philosopher, t_data *data)
 	return SUCCESS;
 }
 
+long	get_time_left(t_philo *philosopher, t_data *data)
+{
+	long	time_left;
+	long	time_passed;
+
+	time_passed = get_timestamp_ms(data->start_time_ms)
+		- philosopher->last_meal_time_ms;
+	time_left = data->time_to_die - time_passed;
+	if (time_left > 0)
+		return (time_left);
+	return 0;
+}
+
 int ph_think(t_philo *philosopher, t_data *data)
 {
-	// long	think_time;
-	//
-	// think_time = (data->time_to_die - (data->time_to_eat + data->time_to_sleep)) - THRESHOLD;
 	update_state(philosopher, IS_THINKING, MSG_THINK, data);
-	// if (think_time > 1)
-	// 	usleep((think_time - 1) * 1000);
-	// else
-	usleep(data->time_to_die - (get_timestamp_ms(data->start_time_ms) - philosopher->last_meal_time_ms));
+	ft_sleep(get_time_left(philosopher, data), data);
+	// usleep();
 	return (SUCCESS);
 }
 

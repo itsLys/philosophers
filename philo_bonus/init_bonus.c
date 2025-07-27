@@ -36,6 +36,7 @@ int init_philosophers(t_data *data)
 {
 	int		i;
 
+	i = 0;
 	while (i < data->number_of_philos)
 	{
 		data->philosophers[i].number = i + 1;

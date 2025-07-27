@@ -58,12 +58,12 @@ static int check_death(t_data *data)
 	{
 		if (is_starving(data->philosophers + i, data))
 		{
-			usleep(2 * 1000);
 			update_state(data->philosophers + i, IS_DEAD, MSG_DIED, data);
 			should_stop(TRUE, data);
 			return FAILURE;
 		}
 		i++;
+		usleep(500);
 	}
 	return SUCCESS;
 }
