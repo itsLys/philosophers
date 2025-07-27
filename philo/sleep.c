@@ -25,14 +25,12 @@ static void	ft_sleep_in_chuncks(long time, t_data *data)
 	}
 }
 
-void	ft_sleepp(long time, t_data *data)
+void	ft_sleep(long time, t_data *data)
 {
 	long	start;
-
 
 	start = get_timestamp_ms(data->start_time_ms);
 	ft_sleep_in_chuncks(time - THRESHOLD, data);
 	while (get_timestamp_ms(data->start_time_ms) - start < time)
 		;
-	dprintf(2, "sleep\n");
 }

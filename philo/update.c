@@ -12,7 +12,6 @@
 
 #include "philo.h"
 
-// NOTE: remove this debg util
 void print_state(t_state state)
 {
 	if (state == IS_EATING)

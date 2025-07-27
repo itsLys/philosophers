@@ -51,8 +51,6 @@ int		grab_forks(t_philo *philosopher, t_data *data)
 
 void	put_down_forks(t_philo *philosopher, t_data *data)
 {
-	unlock_fork(philosopher->left_fork, data);
-	print_timestamp_ms(data, philosopher->number, "DROPPED A FORK\n");
 	unlock_fork(philosopher->right_fork, data);
-	print_timestamp_ms(data, philosopher->number, "DROPPED A FORK\n");
+	unlock_fork(philosopher->left_fork, data);
 }

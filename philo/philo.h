@@ -107,7 +107,7 @@ int					parse_args(int ac, char **av, t_data *data);
 // utils
 void				*ft_malloc(size_t size);
 int					is_even(int n);
-void				ft_sleepp(long time, t_data *data);
+void				ft_sleep(long time, t_data *data);
 
 // time
 long				timeval_to_ms(struct timeval time);
