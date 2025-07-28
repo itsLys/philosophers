@@ -15,5 +15,5 @@
 void	update_state(t_philo *philosopher, t_state state, char *msg, t_data *data)
 {
 	philosopher->state = state;
-	print_timestamp_ms(data, philosopher->number, msg);
+	print_timestamp_ms(data, philosopher, msg);
 }

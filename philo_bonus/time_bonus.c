@@ -31,12 +31,19 @@ long	get_timestamp_ms(long t0_ms)
 }
 
 #include <string.h>
-void print_timestamp_ms(t_data *data, int num, char *msg)
+void print_timestamp_ms(t_data *data, t_philo *philo, char *msg)
 {
 	long	timestamp;
 
 	timestamp = get_timestamp_ms(data->start_time_ms);
+	if (is_starving(philo, data))
+	{
+		sem_wait(data->print_lock);
+		printf("%ld %d %s", timestamp, philo->number, MSG_DIED);
+		sem_post(data->dead_philosophers);
+		return ;
+	}
 	sem_wait(data->print_lock);
-	printf("%ld %d %s", timestamp, num, msg);
+	printf("%ld %d %s", timestamp, philo->number, msg);
 	sem_post(data->print_lock);
 }

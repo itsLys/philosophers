@@ -89,6 +89,9 @@ typedef struct s_data
 }	t_data ;
 
 
+// monitor
+int					is_starving(t_philo *philo, t_data *data);
+
 // init data
 int					init_data(int ac, char **av, t_data *data);
 int					init_philosophers(t_data *data);
@@ -110,13 +113,13 @@ void				ft_sleep(long time, t_data *data);
 // time
 long				gettimeofday_ms(void);
 long				get_timestamp_ms(long t0_ms);
-void				print_timestamp_ms(t_data *data, int num, char *msg);
+void				print_timestamp_ms(t_data *data, t_philo *philo, char *msg);
 
 // update
 void				update_state(t_philo *philosopher, t_state state, char *msg, t_data *data);
 
 // fork
-void				grab_forks(int number, t_data *data);
+void				grab_forks(t_philo *philo, t_data *data);
 
 void				put_down_forks(t_data *data);
 

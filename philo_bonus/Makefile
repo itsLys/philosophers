@@ -1,7 +1,7 @@
 NAME		= philo_bonus
 CC			= cc
 # CFLAGS		= -Wall -Wextra -Werror -ggdb -fsanitize=thread
-CFLAGS		= -Wall -Wextra -Werror
+CFLAGS		= -Wall -Wextra -Werror -pthread
 LFLAGS		= -pthread
 SRC			= init_bonus.c \
 			  main_bonus.c \

@@ -14,6 +14,8 @@
 
 void monitor(t_data *data)
 {
+	//
+	// 0
 	sem_wait(data->dead_philosophers);
 	kill_children(data->number_of_philos, data);
 	clean_exit(SUCCESS, data);

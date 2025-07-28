@@ -12,12 +12,12 @@
 
 #include "philo_bonus.h"
 
-void grab_forks(int number, t_data *data)
+void grab_forks(t_philo *philo, t_data *data)
 {
 	sem_wait(data->forks);
-	print_timestamp_ms(data, number, MSG_TAKE);
+	print_timestamp_ms(data, philo, MSG_TAKE);
 	sem_wait(data->forks);
-	print_timestamp_ms(data, number, MSG_TAKE);
+	print_timestamp_ms(data, philo, MSG_TAKE);
 }
 
 void put_down_forks(t_data *data)
