@@ -12,20 +12,27 @@
 
 #include "philo_bonus.h"
 
-void monitor(t_data *data)
+/* if someone died, he posts the needed number of full phislosphers
+ * 	which will triger the loop to end, and thus going to the next instruction*/
+void track_meal_count(t_data *data)
 {
 	int i;
 
 	i = 0;
-	while (i < data->meal_count)
+	while (i < data->number_of_philos)
 	{
 		sem_wait(data->full_philos);
 		i++;
-		if (i == data->meal_count)
-			sem_post(data->dead_philos);
 	}
+	sem_post(data->dead_philos);
+}
+
+void monitor(t_data *data)
+{
+	usleep(1000);
+	if (data->meal_count != INFINITE)
+		track_meal_count(data);
 	sem_wait(data->dead_philos);
-	usleep((data->time_to_die * 1000));
 	kill_children(data->number_of_philos, data);
 	clean_exit(SUCCESS, data);
 }

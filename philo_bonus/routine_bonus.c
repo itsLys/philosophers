@@ -18,8 +18,11 @@ static int	ph_eat(t_philo *philosopher, t_data *data)
 	update_state(philosopher, IS_EATING, MSG_EAT, data);
 	philosopher->last_meal_time_ms = get_timestamp_ms(data->start_time_ms);
 	philosopher->meals_eaten++;
-	if (data->meal_count >= 0 && philosopher->meals_eaten >= data->meal_count)
+	if (data->meal_count != INFINITE && philosopher->meals_eaten >= data->meal_count)
+	{
 		philosopher->is_full = TRUE;
+		sem_post(data->full_philos);
+	}
 	ft_sleep(data->time_to_eat, data);
 	put_down_forks(data);
 	return SUCCESS;
@@ -70,7 +73,8 @@ int	is_starving(t_philo *philo, t_data *data)
 void routine(t_philo *philosopher, t_data *data)
 {
 	sem_wait(data->dead_philos);
-	sem_wait(data->full_philos);
+	if (data->meal_count != INFINITE)
+		sem_wait(data->full_philos);
 	if (data->number_of_philos == 1)
 		usleep((data->time_to_die + 10) * 1000);
 	if (philosopher->number % 2 == 0)

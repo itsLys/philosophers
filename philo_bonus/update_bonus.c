@@ -12,6 +12,21 @@
 
 #include "philo_bonus.h"
 
+void unblock_monitor(t_data *data)
+{
+	int i;
+
+	if (data->meal_count != INFINITE)
+	{
+		i = 0;
+		while(i < data->number_of_philos)
+		{
+			sem_post(data->full_philos);
+			i++;
+		}
+	}
+}
+
 void	update_state(t_philo *philosopher, t_state state, char *msg, t_data *data)
 {
 	philosopher->state = state;
@@ -19,10 +34,9 @@ void	update_state(t_philo *philosopher, t_state state, char *msg, t_data *data)
 	{
 		print_timestamp_ms(data, philosopher, MSG_DIED);
 		philosopher->state = IS_DEAD;
+		unblock_monitor(data);
 		sem_post(data->dead_philos);
 		return ;
 	}
-	if (philosopher->is_full)
-		sem_post(data->full_philos);
 	print_timestamp_ms(data, philosopher, msg);
 }

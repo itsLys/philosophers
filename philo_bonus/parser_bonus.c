@@ -39,7 +39,7 @@ int parse_args(int ac, char **av, t_data *data)
 			return (ERROR);
 	}
 	else
-		data->meal_count = -1;
+		data->meal_count = INFINITE;
 	if (data->number_of_philos == ERROR
 			|| data->time_to_die == ERROR
 			|| data->time_to_eat == ERROR

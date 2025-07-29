@@ -25,13 +25,13 @@ int	init_semaphores(t_data *data)
 	data->dead_philos = sem_open(SEM_DEAD_PHILOS, O_CREAT | O_EXCL,
 					0644, data->number_of_philos);
 	// refactor -1 to INFINIT
-	if (data->meal_count != INFINIT)
+	if ( data->meal_count != INFINITE )
 		data->full_philos = sem_open(SEM_FULL_PHILOS, O_CREAT | O_EXCL,
 					0644, data->number_of_philos);
 	if (data->dead_philos == SEM_FAILED
 			|| data->forks == SEM_FAILED
 			|| data->print_lock == SEM_FAILED
-			|| (data->meal_count != INFINIT && data->full_philos == SEM_FAILED))
+			|| (data->meal_count != INFINITE && data->full_philos == SEM_FAILED))
 		return ERROR;
 	return SUCCESS;
 }
