@@ -16,16 +16,22 @@ int	init_semaphores(t_data *data)
 {
 	sem_unlink(SEM_FORKS);
 	sem_unlink(SEM_PRINT);
-	sem_unlink(SEM_DEAD_PHILO);
+	sem_unlink(SEM_DEAD_PHILOS);
+	sem_unlink(SEM_FULL_PHILOS);
 	data->forks = sem_open(SEM_FORKS, O_CREAT | O_EXCL,
 					0644, data->number_of_philos);
 	data->print_lock = sem_open(SEM_PRINT, O_CREAT | O_EXCL,
 					0644, 1);
-	data->dead_philosophers = sem_open(SEM_DEAD_PHILO, O_CREAT | O_EXCL,
-					0644, 0);
-	if (data->dead_philosophers == SEM_FAILED
+	data->dead_philos = sem_open(SEM_DEAD_PHILOS, O_CREAT | O_EXCL,
+					0644, data->number_of_philos);
+	// refactor -1 to INFINIT
+	if (data->meal_count != INFINIT)
+		data->full_philos = sem_open(SEM_FULL_PHILOS, O_CREAT | O_EXCL,
+					0644, data->number_of_philos);
+	if (data->dead_philos == SEM_FAILED
 			|| data->forks == SEM_FAILED
-			|| data->print_lock == SEM_FAILED)
+			|| data->print_lock == SEM_FAILED
+			|| (data->meal_count != INFINIT && data->full_philos == SEM_FAILED))
 		return ERROR;
 	return SUCCESS;
 }

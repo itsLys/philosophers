@@ -36,14 +36,15 @@ void print_timestamp_ms(t_data *data, t_philo *philo, char *msg)
 	long	timestamp;
 
 	timestamp = get_timestamp_ms(data->start_time_ms);
-	if (is_starving(philo, data))
-	{
-		sem_wait(data->print_lock);
-		printf("%ld %d %s", timestamp, philo->number, MSG_DIED);
-		sem_post(data->dead_philosophers);
-		return ;
-	}
+	// if (is_starving(philo, data))
+	// {
+	// 	sem_wait(data->print_lock);
+	// 	printf("%ld %d %s", timestamp, philo->number, MSG_DIED);
+	// 	sem_post(data->dead_philosophers);
+	// 	return ;
+	// }
 	sem_wait(data->print_lock);
 	printf("%ld %d %s", timestamp, philo->number, msg);
-	sem_post(data->print_lock);
+	if (philo->state != IS_DEAD)
+		sem_post(data->print_lock);
 }

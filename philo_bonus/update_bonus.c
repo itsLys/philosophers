@@ -15,5 +15,14 @@
 void	update_state(t_philo *philosopher, t_state state, char *msg, t_data *data)
 {
 	philosopher->state = state;
+	if (is_starving(philosopher, data))
+	{
+		print_timestamp_ms(data, philosopher, MSG_DIED);
+		philosopher->state = IS_DEAD;
+		sem_post(data->dead_philos);
+		return ;
+	}
+	if (philosopher->is_full)
+		sem_post(data->full_philos);
 	print_timestamp_ms(data, philosopher, msg);
 }

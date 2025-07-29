@@ -29,12 +29,14 @@
 # define THRESHOLD 3
 # define FAILURE 1
 # define ERROR -1
+# define INFINIT -1
 # define SUCCESS 0
 # define TRUE 1
 # define FALSE 0
 # define SEM_FORKS "/forks"
 # define SEM_PRINT "/print_guard"
-# define SEM_DEAD_PHILO "/dead_philo"
+# define SEM_DEAD_PHILOS "/dead_philosophers"
+# define SEM_FULL_PHILOS "/full_philosophers"
 # define MSG_TAKE "has taken a fork\n"
 # define MSG_EAT "is eating\n"
 # define MSG_SLEEP "is sleeping\n"
@@ -78,7 +80,8 @@ typedef struct s_data
 	t_philo			*philosophers;
 	sem_t			*forks;
 	sem_t 			*print_lock;
-	sem_t 			*dead_philosophers;
+	sem_t 			*dead_philos;
+	sem_t 			*full_philos;
 	int				should_stop;
 	int				number_of_philos;
 	int				time_to_die;

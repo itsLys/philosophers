@@ -14,9 +14,18 @@
 
 void monitor(t_data *data)
 {
-	//
-	// 0
-	sem_wait(data->dead_philosophers);
+	int i;
+
+	i = 0;
+	while (i < data->meal_count)
+	{
+		sem_wait(data->full_philos);
+		i++;
+		if (i == data->meal_count)
+			sem_post(data->dead_philos);
+	}
+	sem_wait(data->dead_philos);
+	usleep((data->time_to_die * 1000));
 	kill_children(data->number_of_philos, data);
 	clean_exit(SUCCESS, data);
 }

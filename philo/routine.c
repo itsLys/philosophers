@@ -45,9 +45,14 @@ long	get_time_left(t_philo *philosopher, t_data *data)
 
 int ph_think(t_philo *philosopher, t_data *data)
 {
+	long	time_left;
+
+	time_left = get_time_left(philosopher, data);
 	update_state(philosopher, IS_THINKING, MSG_THINK, data);
-	// ft_sleep(get_time_left(philosopher, data), data);
-	// usleep();
+	if (time_left)
+		ft_sleep(time_left, data);
+	else
+		usleep(800);
 	return (SUCCESS);
 }
 

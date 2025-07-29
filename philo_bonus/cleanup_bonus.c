@@ -16,8 +16,10 @@ void clear_semaphores(t_data *data)
 {
 	sem_close(data->forks);
 	sem_close(data->print_lock);
+	sem_close(data->dead_philos);
 	sem_unlink(SEM_FORKS);
 	sem_unlink(SEM_PRINT);
+	sem_unlink(SEM_DEAD_PHILO);
 }
 
 void clean_exit(int status, t_data *data)
@@ -33,7 +35,7 @@ void	kill_children(int created, t_data *data)
 
 	i = 0;
 	while (i < created)
-		kill(data->philosophers[i++].pid, SIGTERM);
+		kill(data->philosophers[i++].pid, SIGKILL);
 	i = 0;
 	while (i < created)
 		waitpid(data->philosophers[i++].pid, NULL, 0);
