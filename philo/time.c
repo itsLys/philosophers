@@ -19,7 +19,7 @@ long	timeval_to_ms(struct timeval time)
 
 long	gettimeofday_ms(void)
 {
-	struct timeval time;
+	struct timeval	time;
 
 	gettimeofday(&time, NULL);
 	return (timeval_to_ms(time));
@@ -30,7 +30,7 @@ long	get_timestamp_ms(long t0_ms)
 	return (gettimeofday_ms() - t0_ms);
 }
 
-void print_timestamp_ms(t_data *data, int num, char *msg)
+void	print_timestamp_ms(t_data *data, int num, char *msg)
 {
 	long	timestamp;
 
@@ -43,4 +43,17 @@ void print_timestamp_ms(t_data *data, int num, char *msg)
 	}
 	printf("%ld %d %s", timestamp, num, msg);
 	pthread_mutex_unlock(&data->print_lock);
+}
+
+long	get_time_left(t_philo *philo, t_data *data)
+{
+	long	time_left;
+	long	time_passed;
+
+	time_passed = get_timestamp_ms(data->start_time_ms)
+		- philo->last_meal_time_ms;
+	time_left = data->time_to_die - time_passed;
+	if (time_left > 0)
+		return (time_left);
+	return (0);
 }

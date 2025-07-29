@@ -14,15 +14,15 @@
 
 void	*ft_malloc(size_t size)
 {
-	void *ptr;
+	void	*ptr;
 
 	ptr = malloc(size);
 	if (ptr == NULL)
-		return NULL;
+		return (NULL);
 	return (memset(ptr, 0, size));
 }
 
-int		is_even(int n)
+int	is_even(int n)
 {
 	return (n % 2 == 0);
 }

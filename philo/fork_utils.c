@@ -14,12 +14,12 @@
 
 t_fork_state	get_fork_state(t_fork *fork, t_data *data)
 {
-	t_fork_state state;
+	t_fork_state	state;
 
 	pthread_mutex_lock(&data->fork_state_lock);
 	state = fork->state;
 	pthread_mutex_unlock(&data->fork_state_lock);
-	return state;
+	return (state);
 }
 
 void	lock_fork(t_fork *fork, t_data *data)

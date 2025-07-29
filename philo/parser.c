@@ -26,7 +26,7 @@ int	parse_num(char *str)
 	return (n);
 }
 
-int parse_args(int ac, char **av, t_data *data)
+int	parse_args(int ac, char **av, t_data *data)
 {
 	data->number_of_philos = parse_num(av[1]);
 	data->time_to_die = parse_num(av[2]);
@@ -39,70 +39,12 @@ int parse_args(int ac, char **av, t_data *data)
 			return (ERROR);
 	}
 	else
-		data->meal_count = -1;
+		data->meal_count = INFINITE;
 	if (data->number_of_philos == ERROR
-			|| data->time_to_die == ERROR
-			|| data->time_to_eat == ERROR
-			|| data->time_to_sleep == ERROR)
+		|| data->time_to_die == ERROR
+		|| data->time_to_eat == ERROR
+		|| data->time_to_sleep == ERROR)
 		return (ERROR);
 	else
 		return (EXIT_SUCCESS);
 }
-
-// int init_philos(t_data *data)
-// {
-// 	t_args *args;
-// 	int		i;
-//
-// 	data->philos = malloc(data->philos_num * sizeof(t_philo));
-// 	memset(data->philos, 0, data->philos_num * sizeof(t_philo));
-// 	args = malloc(data->philos_num * sizeof(t_args)); // TODO: check malloc
-// 	if (data->philos == NULL)
-// 		return (ERROR);
-// 	i = 0;
-// 	data->philos[0].left_philo = &data->philos[data->philos_num - 1];
-// 	while (i < data->philos_num)
-// 	{
-// 		args[i] = (t_args) {data, data->philos + i} ;
-// 		data->philos[i].num = i;
-// 		data->philos[i].state = -1;
-// 		if (pthread_mutex_init(&data->philos[i].fork, NULL))
-// 			return (ERROR);
-// 		if (i > 0)
-// 			data->philos[i].left_philo = &data->philos[i - 1];
-// 		if (pthread_create(&data->philos[i].philo, NULL, &routine, args + i))
-// 			return (i + 1);
-// 		i++;
-// 	}
-// 	return (i);
-// }
-//
-// int	init_data(int ac, char **av, t_data *data)
-// {
-// 	if (parse_args(ac, av, data) == ERROR)
-// 		return (ERROR);
-// 	data->start_time_ms = gettimeofday_ms();
-// 	if (pthread_mutex_init(&data->state_guard, NULL)
-// 			|| pthread_mutex_init(&data->print_guard, NULL))
-// 		return (ERROR);
-// 	return (EXIT_SUCCESS);
-// }
-
-// int main(int argc, char **argv)
-// {
-// 	t_data	*data;
-// 	int		created;
-//
-// 	if (argc != 5 && argc != 6)
-// 		return (printf(MSG_USAGE), EXIT_FAILURE);
-// 	data = ft_malloc(sizeof(t_data));
-// 	if (data == NULL)
-// 		return EXIT_FAILURE;
-// 	if (init_data(argc, argv, data) == ERROR)
-// 		return (printf(MSG_USAGE), free(data), EXIT_FAILURE);
-// 	created = init_philosophers(data);
-// 	if (created < data->number_of_philos)
-// 		return (free_resources(created, data), EXIT_FAILURE);
-// 	// monitor
-// 	return EXIT_SUCCESS;
-// }

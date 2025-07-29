@@ -19,43 +19,42 @@ int	init_semaphores(t_data *data)
 	sem_unlink(SEM_DEAD_PHILOS);
 	sem_unlink(SEM_FULL_PHILOS);
 	data->forks = sem_open(SEM_FORKS, O_CREAT | O_EXCL,
-					0644, data->number_of_philos);
+			0644, data->number_of_philos);
 	data->print_lock = sem_open(SEM_PRINT, O_CREAT | O_EXCL,
-					0644, 1);
+			0644, 1);
 	data->dead_philos = sem_open(SEM_DEAD_PHILOS, O_CREAT | O_EXCL,
-					0644, data->number_of_philos);
-	// refactor -1 to INFINIT
-	if ( data->meal_count != INFINITE )
+			0644, data->number_of_philos);
+	if (data->meal_count != INFINITE)
 		data->full_philos = sem_open(SEM_FULL_PHILOS, O_CREAT | O_EXCL,
-					0644, data->number_of_philos);
+				0644, data->number_of_philos);
 	if (data->dead_philos == SEM_FAILED
-			|| data->forks == SEM_FAILED
-			|| data->print_lock == SEM_FAILED
-			|| (data->meal_count != INFINITE && data->full_philos == SEM_FAILED))
-		return ERROR;
-	return SUCCESS;
+		|| data->forks == SEM_FAILED
+		|| data->print_lock == SEM_FAILED
+		|| (data->meal_count != INFINITE && data->full_philos == SEM_FAILED))
+		return (ERROR);
+	return (SUCCESS);
 }
 
-int init_philosophers(t_data *data)
+int	init_philos(t_data *data)
 {
 	int		i;
 
 	i = 0;
 	while (i < data->number_of_philos)
 	{
-		data->philosophers[i].number = i + 1;
-		data->philosophers[i].state = -1;
-		data->philosophers[i].pid = fork();
-		if (data->philosophers[i].pid == 0)
+		data->philos[i].number = i + 1;
+		data->philos[i].state = -1;
+		data->philos[i].pid = fork();
+		if (data->philos[i].pid == 0)
 		{
-			routine(data->philosophers + i, data);
+			routine(data->philos + i, data);
 			clean_exit(SUCCESS, data);
 		}
-		else if (data->philosophers[i].pid == ERROR)
+		else if (data->philos[i].pid == ERROR)
 			return (i);
 		i++;
 	}
-	return i;
+	return (i);
 }
 
 int	init_data(int ac, char **av, t_data *data)
@@ -66,8 +65,8 @@ int	init_data(int ac, char **av, t_data *data)
 		return (clear_semaphores(data), ERROR);
 	data->start_time_ms = gettimeofday_ms();
 	data->should_stop = FALSE;
-	data->philosophers = ft_malloc(data->number_of_philos * sizeof(t_philo));
-	if (data->philosophers == NULL)
+	data->philos = ft_malloc(data->number_of_philos * sizeof(t_philo));
+	if (data->philos == NULL)
 		return (clear_semaphores(data), ERROR);
 	return (EXIT_SUCCESS);
 }

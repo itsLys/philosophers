@@ -12,52 +12,38 @@
 
 #include "philo.h"
 
-void print_state(t_state state)
-{
-	if (state == IS_EATING)
-		dprintf(2, "IS_EATING\n");
-	else if (state == IS_SLEEPING)
-		dprintf(2, "IS_SLEEPING\n");
-	else if (state == IS_THINKING)
-		dprintf(2, "IS_THINKING\n");
-	else if (state == IS_DEAD)
-		dprintf(2, "IS_DEAD\n");
-}
-
-t_state read_state(t_philo *philosopher, t_data *data)
+t_state	read_state(t_philo *philo, t_data *data)
 {
 	t_state	state;
 
 	pthread_mutex_lock(&data->state_lock);
-	state = philosopher->state;
-	// print_state(state);
+	state = philo->state;
 	pthread_mutex_unlock(&data->state_lock);
-	return  (state);
+	return (state);
 }
 
-void	update_state(t_philo *philosopher, t_state state, char *msg, t_data *data)
+void	update_state(t_philo *philo, t_state state, char *msg, t_data *data)
 {
 	if (should_stop(FALSE, data))
 		return ;
 	pthread_mutex_lock(&data->state_lock);
-	philosopher->state = state;
+	philo->state = state;
 	pthread_mutex_unlock(&data->state_lock);
-	print_timestamp_ms(data, philosopher->number, msg);
+	print_timestamp_ms(data, philo->number, msg);
 }
 
-void	update_last_meal(t_philo *philosopher, t_data *data)
+void	update_last_meal(t_philo *philo, t_data *data)
 {
 	pthread_mutex_lock(&data->state_lock);
-	philosopher->last_meal_time_ms = get_timestamp_ms(data->start_time_ms);
+	philo->last_meal_time_ms = get_timestamp_ms(data->start_time_ms);
 	pthread_mutex_unlock(&data->state_lock);
 }
 
-void	update_meal_count(t_philo *philosopher, t_data *data)
+void	update_meal_count(t_philo *philo, t_data *data)
 {
 	pthread_mutex_lock(&data->state_lock);
-	philosopher->meals_eaten++;
-	if (philosopher->meals_eaten >= data->meal_count)
-		philosopher->is_full = TRUE;
+	philo->meals_eaten++;
+	if (philo->meals_eaten >= data->meal_count)
+		philo->is_full = TRUE;
 	pthread_mutex_unlock(&data->state_lock);
 }
-

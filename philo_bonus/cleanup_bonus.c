@@ -12,7 +12,7 @@
 
 #include "philo_bonus.h"
 
-void clear_semaphores(t_data *data)
+void	clear_semaphores(t_data *data)
 {
 	sem_close(data->forks);
 	sem_close(data->print_lock);
@@ -24,21 +24,21 @@ void clear_semaphores(t_data *data)
 	sem_unlink(SEM_FULL_PHILOS);
 }
 
-void clean_exit(int status, t_data *data)
+void	clean_exit(int status, t_data *data)
 {
 	clear_semaphores(data);
-	free(data->philosophers);
+	free(data->philos);
 	exit(status);
 }
 
 void	kill_children(int created, t_data *data)
 {
-	int i;
+	int	i;
 
 	i = 0;
 	while (i < created)
-		kill(data->philosophers[i++].pid, SIGKILL);
+		kill(data->philos[i++].pid, SIGKILL);
 	i = 0;
 	while (i < created)
-		waitpid(data->philosophers[i++].pid, NULL, 0);
+		waitpid(data->philos[i++].pid, NULL, 0);
 }

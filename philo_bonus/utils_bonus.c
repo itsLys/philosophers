@@ -14,10 +14,10 @@
 
 void	*ft_malloc(size_t size)
 {
-	void *ptr;
+	void	*ptr;
 
 	ptr = malloc(size);
 	if (ptr == NULL)
-		return NULL;
+		return (NULL);
 	return (memset(ptr, 0, size));
 }

@@ -12,7 +12,7 @@
 
 #include "philo_bonus.h"
 
-void grab_forks(t_philo *philo, t_data *data)
+void	grab_forks(t_philo *philo, t_data *data)
 {
 	sem_wait(data->forks);
 	print_timestamp_ms(data, philo, MSG_TAKE);
@@ -20,7 +20,7 @@ void grab_forks(t_philo *philo, t_data *data)
 	print_timestamp_ms(data, philo, MSG_TAKE);
 }
 
-void put_down_forks(t_data *data)
+void	put_down_forks(t_data *data)
 {
 	sem_post(data->forks);
 	sem_post(data->forks);

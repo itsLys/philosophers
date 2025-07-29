@@ -6,13 +6,13 @@
 /*   By: ihajji <ihajji@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 09:23:05 by ihajji            #+#    #+#             */
-/*   Updated: 2025/07/23 10:47:33 by ihajji           ###   ########.fr       */
+/*   Updated: 2025/07/29 15:39:06 by ihajji           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-int main(int argc, char **argv)
+int	main(int argc, char **argv)
 {
 	t_data	data;
 	int		created;
@@ -24,12 +24,12 @@ int main(int argc, char **argv)
 	created = init_forks(&data);
 	if (created < data.number_of_philos)
 		return (destroy_forks(created, &data), EXIT_FAILURE);
-	created = init_philosophers(&data);
+	created = init_philos(&data);
 	if (created < data.number_of_philos)
 		return (destroy_forks(created, &data),
-				detach_threads(created, &data),
-				EXIT_FAILURE);
+			detach_threads(created, &data),
+			EXIT_FAILURE);
 	monitor(&data);
 	free_resources(&data);
-	return EXIT_SUCCESS;
+	return (EXIT_SUCCESS);
 }

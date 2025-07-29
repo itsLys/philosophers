@@ -26,7 +26,7 @@ int	parse_num(char *str)
 	return (n);
 }
 
-int parse_args(int ac, char **av, t_data *data)
+int	parse_args(int ac, char **av, t_data *data)
 {
 	data->number_of_philos = parse_num(av[1]);
 	data->time_to_die = parse_num(av[2]);
@@ -41,9 +41,9 @@ int parse_args(int ac, char **av, t_data *data)
 	else
 		data->meal_count = INFINITE;
 	if (data->number_of_philos == ERROR
-			|| data->time_to_die == ERROR
-			|| data->time_to_eat == ERROR
-			|| data->time_to_sleep == ERROR)
+		|| data->time_to_die == ERROR
+		|| data->time_to_eat == ERROR
+		|| data->time_to_sleep == ERROR)
 		return (ERROR);
 	else
 		return (EXIT_SUCCESS);

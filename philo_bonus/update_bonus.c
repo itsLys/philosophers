@@ -12,14 +12,14 @@
 
 #include "philo_bonus.h"
 
-void unblock_monitor(t_data *data)
+void	unblock_monitor(t_data *data)
 {
-	int i;
+	int	i;
 
 	if (data->meal_count != INFINITE)
 	{
 		i = 0;
-		while(i < data->number_of_philos)
+		while (i < data->number_of_philos)
 		{
 			sem_post(data->full_philos);
 			i++;
@@ -27,16 +27,16 @@ void unblock_monitor(t_data *data)
 	}
 }
 
-void	update_state(t_philo *philosopher, t_state state, char *msg, t_data *data)
+void	update_state(t_philo *philo, t_state state, char *msg, t_data *data)
 {
-	philosopher->state = state;
-	if (is_starving(philosopher, data))
+	philo->state = state;
+	if (is_starving(philo, data))
 	{
-		print_timestamp_ms(data, philosopher, MSG_DIED);
-		philosopher->state = IS_DEAD;
+		print_timestamp_ms(data, philo, MSG_DIED);
+		philo->state = IS_DEAD;
 		unblock_monitor(data);
 		sem_post(data->dead_philos);
 		return ;
 	}
-	print_timestamp_ms(data, philosopher, msg);
+	print_timestamp_ms(data, philo, msg);
 }

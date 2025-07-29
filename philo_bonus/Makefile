@@ -5,6 +5,7 @@ CFLAGS		= -Wall -Wextra -Werror -pthread -ggdb
 LFLAGS		= -pthread -ggdb
 SRC			= init_bonus.c \
 			  main_bonus.c \
+			  monitor_bonus.c \
 			  routine_bonus.c \
 			  forks_bonus.c \
 			  update_bonus.c \

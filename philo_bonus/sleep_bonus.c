@@ -20,7 +20,7 @@ static void	ft_sleep_in_chuncks(long time, t_data *data)
 	while (get_timestamp_ms(data->start_time_ms) - start < time)
 	{
 		if (data->should_stop)
-			break;
+			break ;
 		usleep(100);
 	}
 }
@@ -33,6 +33,7 @@ void	ft_sleep(long time, t_data *data)
 		return ;
 	start = get_timestamp_ms(data->start_time_ms);
 	ft_sleep_in_chuncks(time, data);
-	while (data->should_stop == FALSE && get_timestamp_ms(data->start_time_ms) - start < time)
+	while (data->should_stop == FALSE
+		&& get_timestamp_ms(data->start_time_ms) - start < time)
 		;
 }

@@ -16,19 +16,15 @@ int	should_stop(int set, t_data *data)
 {
 	int	should_stop;
 
-	if (set)
-	{
-		pthread_mutex_lock(&data->simulation);
-		data->should_stop = TRUE;
-		pthread_mutex_unlock(&data->simulation);
-	}
 	pthread_mutex_lock(&data->simulation);
+	if (set)
+		data->should_stop = TRUE;
 	should_stop = data->should_stop;
 	pthread_mutex_unlock(&data->simulation);
 	return (should_stop);
 }
 
-static int check_full(t_data *data)
+static int	check_full(t_data *data)
 {
 	int	i;
 	int	n;
@@ -37,38 +33,38 @@ static int check_full(t_data *data)
 	i = 0;
 	while (i < data->number_of_philos)
 	{
-		if (is_full(data->philosophers + i, data))
+		if (is_full(data->philos + i, data))
 			n++;
 		i++;
 	}
 	if (n == data->number_of_philos)
 	{
 		should_stop(TRUE, data);
-		return FAILURE;
+		return (FAILURE);
 	}
-	return  SUCCESS;
+	return (SUCCESS);
 }
 
-static int check_death(t_data *data)
+static int	check_death(t_data *data)
 {
 	int	i;
 
 	i = 0;
 	while (i < data->number_of_philos)
 	{
-		if (is_starving(data->philosophers + i, data))
+		if (is_starving(data->philos + i, data))
 		{
-			update_state(data->philosophers + i, IS_DEAD, MSG_DIED, data);
+			update_state(data->philos + i, IS_DEAD, MSG_DIED, data);
 			should_stop(TRUE, data);
-			return FAILURE;
+			return (FAILURE);
 		}
 		i++;
 		usleep(500);
 	}
-	return SUCCESS;
+	return (SUCCESS);
 }
 
-void monitor(t_data *data)
+void	monitor(t_data *data)
 {
 	usleep(500);
 	while (1)

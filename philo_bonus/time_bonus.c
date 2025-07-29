@@ -19,7 +19,7 @@ long	timeval_to_ms(struct timeval time)
 
 long	gettimeofday_ms(void)
 {
-	struct timeval time;
+	struct timeval	time;
 
 	gettimeofday(&time, NULL);
 	return (timeval_to_ms(time));
@@ -30,19 +30,24 @@ long	get_timestamp_ms(long t0_ms)
 	return (gettimeofday_ms() - t0_ms);
 }
 
-#include <string.h>
-void print_timestamp_ms(t_data *data, t_philo *philo, char *msg)
+long	get_time_left(t_philo *philo, t_data *data)
+{
+	long	time_left;
+	long	time_passed;
+
+	time_passed = get_timestamp_ms(data->start_time_ms)
+		- philo->last_meal_time_ms;
+	time_left = data->time_to_die - time_passed;
+	if (time_left > 0)
+		return (time_left);
+	return (0);
+}
+
+void	print_timestamp_ms(t_data *data, t_philo *philo, char *msg)
 {
 	long	timestamp;
 
 	timestamp = get_timestamp_ms(data->start_time_ms);
-	// if (is_starving(philo, data))
-	// {
-	// 	sem_wait(data->print_lock);
-	// 	printf("%ld %d %s", timestamp, philo->number, MSG_DIED);
-	// 	sem_post(data->dead_philosophers);
-	// 	return ;
-	// }
 	sem_wait(data->print_lock);
 	printf("%ld %d %s", timestamp, philo->number, msg);
 	if (philo->state != IS_DEAD)
