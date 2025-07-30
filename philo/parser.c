@@ -40,7 +40,7 @@ int	parse_args(int ac, char **av, t_data *data)
 	}
 	else
 		data->meal_count = INFINITE;
-	if (data->number_of_philos == ERROR
+	if (data->number_of_philos <= 0
 		|| data->time_to_die == ERROR
 		|| data->time_to_eat == ERROR
 		|| data->time_to_sleep == ERROR)

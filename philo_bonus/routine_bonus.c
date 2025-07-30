@@ -54,7 +54,10 @@ void	routine(t_philo *philo, t_data *data)
 	if (data->meal_count != INFINITE)
 		sem_wait(data->full_philos);
 	if (data->number_of_philos == 1)
+	{
 		usleep((data->time_to_die + 10) * 1000);
+		philo->state = IS_DEAD;
+	}
 	if (philo->number % 2 == 0)
 		ft_sleep(data->time_to_eat - 1, data);
 	while (1)
