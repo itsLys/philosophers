@@ -32,8 +32,8 @@ void	update_state(t_philo *philo, t_state state, char *msg, t_data *data)
 	philo->state = state;
 	if (is_starving(philo, data))
 	{
-		print_timestamp_ms(data, philo, MSG_DIED);
 		philo->state = IS_DEAD;
+		print_timestamp_ms(data, philo, MSG_DIED);
 		unblock_monitor(data);
 		sem_post(data->dead_philos);
 		return ;
